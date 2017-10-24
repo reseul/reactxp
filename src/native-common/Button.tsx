@@ -84,6 +84,16 @@ export class Button extends React.Component<Types.ButtonProps, {}> {
         this._setOpacityStyles(props);
     }
 
+    protected _render(internalProps: any): JSX.Element {
+        return (
+            <RN.Animated.View
+                {...internalProps}
+            >
+                { this.props.children }
+            </RN.Animated.View>
+        );
+    }
+
     render() {
         // Accessibility props.
         const importantForAccessibility = AccessibilityUtil.importantForAccessibilityToString(this.props.importantForAccessibility,
@@ -95,27 +105,25 @@ export class Button extends React.Component<Types.ButtonProps, {}> {
 
         const opacityStyle = !this.props.disableTouchOpacityAnimation && this._opacityAnimatedStyle;
 
-        return (
-            <RN.Animated.View
-                ref={ this._onButtonRef }
-                style={ Styles.combine([_styles.defaultButton, this.props.style, opacityStyle,
-                    this.props.disabled && _styles.disabled]) }
-                accessibilityLabel={ this.props.accessibilityLabel || this.props.title }
-                accessibilityTraits={ accessibilityTrait }
-                accessibilityComponentType={ accessibilityComponentType }
-                importantForAccessibility={ importantForAccessibility }
-                onStartShouldSetResponder={ this.touchableHandleStartShouldSetResponder }
-                onResponderTerminationRequest={ this.touchableHandleResponderTerminationRequest }
-                onResponderGrant={ this.touchableHandleResponderGrant }
-                onResponderMove={ this.touchableHandleResponderMove }
-                onResponderRelease={ this.touchableHandleResponderRelease }
-                onResponderTerminate={ this.touchableHandleResponderTerminate }
-                shouldRasterizeIOS={ this.props.shouldRasterizeIOS }
-                onAccessibilityTapIOS={ this.props.onAccessibilityTapIOS }
-            >
-                { this.props.children }
-            </RN.Animated.View>
-        );
+        let _internalProps: any = {
+            re: this._onButtonRef,
+            style: Styles.combine([_styles.defaultButton, this.props.style, opacityStyle,
+                this.props.disabled && _styles.disabled]),
+            accessibilityLabel: this.props.accessibilityLabel || this.props.title,
+            accessibilityTraits: accessibilityTrait,
+            accessibilityComponentType: accessibilityComponentType,
+            importantForAccessibility: importantForAccessibility,
+            onStartShouldSetResponder: this.touchableHandleStartShouldSetResponder,
+            onResponderTerminationRequest: this.touchableHandleResponderTerminationRequest,
+            onResponderGrant: this.touchableHandleResponderGrant,
+            onResponderMove: this.touchableHandleResponderMove,
+            onResponderRelease: this.touchableHandleResponderRelease,
+            onResponderTerminate: this.touchableHandleResponderTerminate,
+            shouldRasterizeIOS: this.props.shouldRasterizeIOS,
+            onAccessibilityTapIOS: this.props.onAccessibilityTapIOS
+        };
+
+        return this._render(_internalProps);
     }
 
     componentDidMount() {

@@ -22,7 +22,7 @@ import { default as ActivityIndicatorImpl, ActivityIndicator as ActivityIndicato
 import { default as AlertImpl, Alert as AlertType } from '../native-common/Alert';
 import { default as AppImpl, App as AppType } from '../native-common/App';
 import { default as PickerImpl, Picker as PickerType } from '../native-common/Picker';
-import { default as ButtonImpl, Button as ButtonType } from '../native-common/Button';
+import { default as ButtonImpl, Button as ButtonType } from './Button';
 import { default as ImageImpl, Image as ImageType } from '../native-common/Image';
 import { default as ClipboardImpl, Clipboard as ClipboardType } from '../native-common/Clipboard';
 import { default as GestureViewImpl, GestureView as GestureViewType } from './GestureView';
@@ -57,7 +57,7 @@ ViewBase.setDefaultViewStyle(_defaultViewStyle);
 
 // Initialize Windows implementation of platform accessibility helpers inside the singleton
 // instance of native-common AccessibilityUtil. This is to let native-common components access
-// platform specific APIs through native-common implementation itself. 
+// platform specific APIs through native-common implementation itself.
 import AccessibilityUtil from '../native-common/AccessibilityUtil';
 import AccessibilityPlatformUtil from './AccessibilityUtil';
 
