@@ -67,7 +67,7 @@ export class Button extends React.Component<Types.ButtonProps, {}> {
 
     private _isMounted = false;
     private _hideTimeout: number = null;
-    private _buttonElement: RN.Animated.View = null;
+    protected _buttonElement: RN.Animated.View = null;
     private _defaultOpacityValue: number = null;
     private _opacityAnimatedValue: RN.Animated.Value = null;
     private _opacityAnimatedStyle: Types.AnimatedViewStyleRuleSet = null;
@@ -85,9 +85,15 @@ export class Button extends React.Component<Types.ButtonProps, {}> {
     }
 
     protected _render(internalProps: any): JSX.Element {
+
+        let viewProps: RN.ViewProps = {
+            ...internalProps,
+            ref: this._onButtonRef,
+        };
+
         return (
             <RN.Animated.View
-                {...internalProps}
+                {...viewProps}
             >
                 { this.props.children }
             </RN.Animated.View>
@@ -106,7 +112,6 @@ export class Button extends React.Component<Types.ButtonProps, {}> {
         const opacityStyle = !this.props.disableTouchOpacityAnimation && this._opacityAnimatedStyle;
 
         let _internalProps: any = {
-            re: this._onButtonRef,
             style: Styles.combine([_styles.defaultButton, this.props.style, opacityStyle,
                 this.props.disabled && _styles.disabled]),
             accessibilityLabel: this.props.accessibilityLabel || this.props.title,
@@ -225,7 +230,7 @@ export class Button extends React.Component<Types.ButtonProps, {}> {
         }
     }
 
-    private _onButtonRef = (btn: RN.Animated.View): void => {
+    protected _onButtonRef = (btn: RN.Animated.View): void => {
         this._buttonElement = btn;
     }
 
