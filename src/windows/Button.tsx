@@ -8,6 +8,7 @@
 */
 
 import React = require('react');
+import Types = require('../common/Types');
 import {Button as ButtonBase} from '../native-common/Button';
 import RN = require('react-native');
 import RNW = require('react-native-windows');
@@ -20,7 +21,14 @@ const KEY_CODE_SPACE = 32;
 const DOWN_KEYCODES = [KEY_CODE_SPACE, KEY_CODE_ENTER];
 const UP_KEYCODES = [KEY_CODE_SPACE];
 
+const _longPressTime = 1000;
+
 export class Button extends ButtonBase {
+
+    private _lastKeyDownTime: number = 0;
+    private _lastKeyDownEvent: Types.SyntheticEvent;
+    private _ignorPress = false;
+    private _longPressTimer: number;
 
     protected _buttonElement : RNW.AnimatedFocusableView = null;
 
@@ -69,68 +77,58 @@ export class Button extends ButtonBase {
 
     blur() {
         super.blur();
-        // noop
-    }
+        if (this._buttonElement && this._buttonElement.focus) {
+            this._buttonElement.blur();
+        }
+   }
 
     private _onKeyDown = (e: React.KeyboardEvent): void => {
+
         if (!this.props.disabled) {
             if (this.props.onKeyPress) {
                 this.props.onKeyPress(e);
             }
 
+            if (this.props.onPress || this.props.onLongPress) {
+                let key = (e.nativeEvent as any).key;
 
-
-            if (this.props.onLongPress) {
-                this._lastMouseDownTime = Date.now().valueOf();
-                this._lastMouseDownEvent = e;
-                e.persist();
-
-                this._longPressTimer = window.setTimeout(() => {
-                    this._longPressTimer = undefined;
-                    if (this.props.onLongPress) {
-                        this.props.onLongPress(this._lastMouseDownEvent);
-                        this._ignoreClick = true;
+                if (this.props.onPress) {
+                    // ENTER triggers press on key down
+                    if (key === KEY_CODE_ENTER) {
+                        this.props.onPress(e);
+                        return;
                     }
-                }, _longPressTime);
-            }
+                }
 
-        }
-        if (this.props.onKeyPress) {
-            let key = (e.nativeEvent as any).key;
+                if (this.props.onLongPress) {
+                    // SPACE triggers press or longpress on key up
+                    this._lastKeyDownTime = Date.now().valueOf();
+                    this._lastKeyDownEvent = e;
+                    e.persist();
 
-            if (key === KEY_CODE_SPACE) {
-                this.props.onKeyPress(e);
-            }
-        }
-
-        if (this.props.onPress) {
-            let key = (e.nativeEvent as any).key;
-
-            if (key === KEY_CODE_SPACE) {
-                this.props.onPress(e);
+                    this._longPressTimer = window.setTimeout(() => {
+                        this._longPressTimer = undefined;
+                        if (this.props.onLongPress) {
+                            this.props.onLongPress(this._lastKeyDownEvent);
+                            this._ignorPress = true;
+                        }
+                    }, _longPressTime);
+                }
             }
         }
     }
 
     private _onKeyUp = (e: React.KeyboardEvent): void => {
-        if (this.props.onKeyPress) {
-            let key = (e.nativeEvent as any).key;
 
-            if (key === KEY_CODE_SPACE) {
-                this.props.onKeyPress(e);
-            }
-        }
-
-        if (this.props.onPress) {
-            let key = (e.nativeEvent as any).key;
-
-            if (key === KEY_CODE_SPACE) {
+        if ((e.nativeEvent as any).key === KEY_CODE_SPACE) {
+            if (this._ignorPress) {
+                e.stopPropagation();
+                this._ignorPress = false;
+            } else if (!this.props.disabled && this.props.onPress) {
                 this.props.onPress(e);
             }
         }
     }
-
-
 }
 
 export default Button;
