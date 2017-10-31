@@ -75,6 +75,14 @@ export class View extends ViewBase<Types.ViewProps, {}> {
         return !!(viewProps.onPress || viewProps.onLongPress);
     }
 
+    protected renderButton(internalProps: any) : JSX.Element {
+        return (
+                <Button { ...internalProps }>
+                    { this.props.children }
+                </Button>
+            );
+    }
+
     render() {
         if (this.props.animateChildEnter || this.props.animateChildMove || this.props.animateChildLeave) {
             return (
@@ -83,11 +91,7 @@ export class View extends ViewBase<Types.ViewProps, {}> {
                 </AnimateListEdits>
             );
         } else if (this._isButton(this.props)) {
-            return (
-                <Button { ...this._internalProps }>
-                    { this.props.children }
-                </Button>
-            );
+            return this.renderButton(this._internalProps);
         } else {
             return (
                 <RN.View { ...this._internalProps }>

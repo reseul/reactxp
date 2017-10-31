@@ -41,7 +41,11 @@ export class Button extends ButtonBase {
             this._buttonElement.setNativeProps(nativeProps);
         }
     }
-
+/*
+    public render(): JSX.Element {
+        return super.render();
+    }
+*/
     protected _render(internalProps: any): JSX.Element {
 
         let tabIndex: number = this.props.tabIndex || 0;

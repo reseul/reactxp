@@ -44,7 +44,7 @@ import { default as TextImpl, Text as TextType } from '../native-common/Text';
 import { default as TextInputImpl, TextInput as TextInputType } from '../native-common/TextInput';
 import { default as UserInterfaceImpl, UserInterface as UserInterfaceType } from '../native-common/UserInterface';
 import { default as UserPresenceImpl, UserPresence as UserPresenceType } from '../native-common/UserPresence';
-import { default as ViewImpl, View as ViewType } from '../native-common/View';
+import { default as ViewImpl, View as ViewType } from './View';
 import { default as WebViewImpl, WebView as WebViewType } from '../native-common/WebView';
 import ViewBase from '../native-common/ViewBase';
 
