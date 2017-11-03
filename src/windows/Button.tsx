@@ -13,8 +13,6 @@ import {Button as ButtonBase} from '../native-common/Button';
 import RN = require('react-native');
 import RNW = require('react-native-windows');
 
-const ReactAnimatedFocusableView = RN.Animated.createAnimatedComponent(RNW.FocusableViewWindows);
-
 const KEY_CODE_ENTER = 13;
 const KEY_CODE_SPACE = 32;
 
@@ -30,9 +28,9 @@ export class Button extends ButtonBase {
     private _ignorPress = false;
     private _longPressTimer: number;
 
-    protected _buttonElement : RNW.AnimatedFocusableView = null;
+    protected _buttonElement : RNW.FocusableViewWindows = null;
 
-    protected _onButtonRef = (btn: RNW.AnimatedFocusableView): void => {
+    protected _onButtonRef = (btn: RNW.FocusableViewWindows): void => {
         this._buttonElement = btn;
     }
 
@@ -47,8 +45,7 @@ export class Button extends ButtonBase {
         let tabIndex: number = this.props.tabIndex || 0;
         let windowsTabFocusable: boolean = !this.props.disabled && tabIndex >= 0;
 
-        let viewProps: RNW.FocusableViewProps = {
-            ...internalProps,
+        let focusableViewProps: RNW.FocusableViewProps = {
             ref: this._onButtonRef,
             isTabStop: windowsTabFocusable,
             tabIndex: tabIndex,
@@ -59,11 +56,15 @@ export class Button extends ButtonBase {
         };
 
         return (
-            <ReactAnimatedFocusableView
-                {...viewProps}
+            <RNW.FocusableViewWindows
+                {...focusableViewProps}
             >
-                { this.props.children }
-            </ReactAnimatedFocusableView>
+                <RN.Animated.View
+                    {...internalProps}
+                >
+                    { this.props.children }
+                </RN.Animated.View>
+            </RNW.FocusableViewWindows>
         );
     }
 

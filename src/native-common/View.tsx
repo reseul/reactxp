@@ -53,7 +53,7 @@ export class View extends ViewBase<Types.ViewProps, {}> {
             accessibilityLiveRegion: AccessibilityUtil.accessibilityLiveRegionToString(props.accessibilityLiveRegion),
         };
 
-        // Don't merge accessibilityProps for Button, which translates them for RN on it's own.
+        // Don't merge accessibilityProps for Button, which translates them for RN on its own.
         if (!this._isButton(props)) {
             this._internalProps = _.extend(this._internalProps, accessibilityProps);
         }

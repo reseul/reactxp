@@ -31,6 +31,4 @@ declare module 'react-native-windows' {
     }
 
     class FocusableViewWindows extends RN.ReactNativeBaseComponent<FocusableViewProps, {}> { }
-
-    class AnimatedFocusableView extends RN.ReactNativeBaseComponent<FocusableViewProps, {}> {}
 }
