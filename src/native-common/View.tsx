@@ -20,7 +20,7 @@ import Types = require('../common/Types');
 import ViewBase from './ViewBase';
 
 export class View extends ViewBase<Types.ViewProps, {}> {
-    private _internalProps: any = {};
+    protected _internalProps: any = {};
 
     constructor(props: Types.ViewProps) {
         super(props);
@@ -37,7 +37,7 @@ export class View extends ViewBase<Types.ViewProps, {}> {
      * be careful with setting any non layout properties unconditionally in this method to any value
      * as on android that would lead to extra layers of Views.
      */
-    private _buildInternalProps(props: Types.ViewProps) {
+    protected _buildInternalProps(props: Types.ViewProps) {
         this._internalProps = _.clone(props) as any;
         this._internalProps.style = this._getStyles(props);
         this._internalProps.ref = this._setNativeView;
@@ -71,13 +71,13 @@ export class View extends ViewBase<Types.ViewProps, {}> {
         }
     }
 
-    private _isButton (viewProps: Types.ViewProps): boolean {
+    protected _isButton (viewProps: Types.ViewProps): boolean {
         return !!(viewProps.onPress || viewProps.onLongPress);
     }
 
-    protected renderButton(internalProps: any) : JSX.Element {
+    protected _renderButton() : JSX.Element {
         return (
-                <Button { ...internalProps }>
+                <Button { ...this._internalProps }>
                     { this.props.children }
                 </Button>
             );
@@ -91,7 +91,7 @@ export class View extends ViewBase<Types.ViewProps, {}> {
                 </AnimateListEdits>
             );
         } else if (this._isButton(this.props)) {
-            return this.renderButton(this._internalProps);
+            return this._renderButton();
         } else {
             return (
                 <RN.View { ...this._internalProps }>

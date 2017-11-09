@@ -28,7 +28,7 @@ declare module 'react-native-windows' {
         handledKeyUpKeys?               : number[];
         onKeyDown?                      : Function;
         onKeyUp?                        : Function;
-    }
+     }
 
     class FocusableViewWindows extends RN.ReactNativeBaseComponent<FocusableViewProps, {}> { }
 }
