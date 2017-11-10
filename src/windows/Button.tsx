@@ -53,7 +53,9 @@ export class Button extends ButtonBase {
             handledKeyDownKeys: DOWN_KEYCODES,
             handledKeyUpKeys: UP_KEYCODES,
             onKeyDown: this._onKeyDown,
-            onKeyUp: this._onKeyUp
+            onKeyUp: this._onKeyUp,
+            onFocus: this._onFocus,
+            onBlur: this._onBlur
         };
 
         return (
@@ -123,7 +125,7 @@ export class Button extends ButtonBase {
         }
     }
 
-    private _onKeyUp = (e: React.KeyboardEvent): void => {
+    private _onKeyUp = (e: React.SyntheticEvent): void => {
 
         let keyEvent = EventHelpers.toKeyboardEvent(e);
         if (keyEvent.keyCode === KEY_CODE_SPACE) {
@@ -133,6 +135,18 @@ export class Button extends ButtonBase {
             } else if (!this.props.disabled && this.props.onPress) {
                 this.props.onPress(keyEvent);
             }
+        }
+    }
+
+    private _onFocus = (e: React.SyntheticEvent): void => {
+        if (this.props.onFocus) {
+            this.props.onFocus(EventHelpers.toFocusEvent(e));
+        }
+    }
+
+    private _onBlur = (e: React.SyntheticEvent): void => {
+        if (this.props.onBlur) {
+            this.props.onBlur(EventHelpers.toFocusEvent(e));
         }
     }
 }

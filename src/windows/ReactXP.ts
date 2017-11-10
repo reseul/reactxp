@@ -10,7 +10,7 @@
 
 import React = require('react');
 
-import AnimatedImpl = require('../native-common/Animated');
+import AnimatedImpl = require('./Animated');
 import RXInterface = require('../common/Interfaces');
 import RXTypes = require('../common/Types');
 
