@@ -42,6 +42,7 @@ const _styles = {
 const _longPressTime = 1000;
 const _defaultAccessibilityTrait = Types.AccessibilityTrait.Button;
 
+// TODO: Add special treatment (hover, etc.) when keyboard navigation is ON
 let _isNavigatingWithKeyboard = false;
 
 UserInterface.keyboardNavigationEvent.subscribe(isNavigatingWithKeyboard => {

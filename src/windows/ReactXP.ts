@@ -42,7 +42,7 @@ import { default as StorageImpl, Storage as StorageType } from '../native-common
 import { default as StylesImpl, Styles as StylesType } from '../native-common/Styles';
 import { default as TextImpl, Text as TextType } from './Text';
 import { default as TextInputImpl, TextInput as TextInputType } from '../native-common/TextInput';
-import { default as UserInterfaceImpl, UserInterface as UserInterfaceType } from '../native-common/UserInterface';
+import { default as UserInterfaceImpl, UserInterface as UserInterfaceType } from '../native-desktop/UserInterface';
 import { default as UserPresenceImpl, UserPresence as UserPresenceType } from '../native-common/UserPresence';
 import { default as ViewImpl, View as ViewType } from './View';
 import { default as WebViewImpl, WebView as WebViewType } from '../native-common/WebView';

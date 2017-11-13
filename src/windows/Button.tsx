@@ -11,6 +11,7 @@ import React = require('react');
 import Types = require('../common/Types');
 import {Button as ButtonBase} from '../native-common/Button';
 import EventHelpers from './utils/EventHelpers';
+import UserInterface from '../native-desktop/UserInterface';
 import RN = require('react-native');
 import RNW = require('react-native-windows');
 
@@ -21,6 +22,12 @@ const DOWN_KEYCODES = [KEY_CODE_SPACE, KEY_CODE_ENTER];
 const UP_KEYCODES = [KEY_CODE_SPACE];
 
 const _longPressTime = 1000;
+
+let _isNavigatingWithKeyboard = false;
+
+UserInterface.keyboardNavigationEvent.subscribe(isNavigatingWithKeyboard => {
+    _isNavigatingWithKeyboard = isNavigatingWithKeyboard;
+});
 
 export class Button extends ButtonBase {
 
