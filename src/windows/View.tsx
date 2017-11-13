@@ -52,18 +52,6 @@ export class View extends ViewCommon {
         return super._isButton(viewProps) ||
             (!!viewProps.onKeyPress && viewProps.tabIndex !== undefined);
     }
-/*
-    protected _isButton (viewProps: Types.ViewProps): boolean {
-        // In addition to the general criteria (views with onPress or onLongPress are buttons)
-        // we treat any view with a defined tabIndex as a "button".
-        return super._isButton(viewProps) ||
-            (viewProps.tabIndex !== undefined);
-    }
-
-    protected _isButton (viewProps: Types.ViewProps): boolean {
-        return false;
-    }
-*/
 
     protected _renderButton() : JSX.Element {
 

@@ -24,11 +24,6 @@ const _longPressTime = 1000;
 
 export class Button extends ButtonBase {
 
-    private _lastKeyDownTime: number = 0;
-    private _lastKeyDownEvent: Types.SyntheticEvent;
-    private _ignorPress = false;
-    private _longPressTimer: number;
-
     protected _buttonElement : RNW.FocusableViewWindows = null;
 
     protected _onButtonRef = (btn: RNW.FocusableViewWindows): void => {
@@ -94,32 +89,12 @@ export class Button extends ButtonBase {
                 this.props.onKeyPress(keyEvent);
             }
 
-            if (this.props.onPress || this.props.onLongPress) {
+            if (this.props.onPress) {
                 let key = keyEvent.keyCode;
-
-                if (this.props.onPress) {
-                    // ENTER triggers press on key down
-                    if (key === KEY_CODE_ENTER) {
-                        this.props.onPress(keyEvent);
-                        return;
-                    }
-                }
-
-                if (this.props.onLongPress) {
-                    // SPACE triggers press or longpress on key up
-                    if (key === KEY_CODE_SPACE) {
-                        this._lastKeyDownTime = Date.now().valueOf();
-                        this._lastKeyDownEvent = keyEvent;
-                        keyEvent.persist();
-
-                        this._longPressTimer = window.setTimeout(() => {
-                            this._longPressTimer = undefined;
-                            if (this.props.onLongPress) {
-                                this.props.onLongPress(this._lastKeyDownEvent);
-                                this._ignorPress = true;
-                            }
-                        }, _longPressTime);
-                    }
+                // ENTER triggers press on key down
+                if (key === KEY_CODE_ENTER) {
+                    this.props.onPress(keyEvent);
+                    return;
                 }
             }
         }
@@ -129,10 +104,7 @@ export class Button extends ButtonBase {
 
         let keyEvent = EventHelpers.toKeyboardEvent(e);
         if (keyEvent.keyCode === KEY_CODE_SPACE) {
-            if (this._ignorPress) {
-                e.stopPropagation();
-                this._ignorPress = false;
-            } else if (!this.props.disabled && this.props.onPress) {
+            if (!this.props.disabled && this.props.onPress) {
                 this.props.onPress(keyEvent);
             }
         }

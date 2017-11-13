@@ -31,4 +31,13 @@ declare module 'react-native-windows' {
      }
 
     class FocusableViewWindows extends RN.ReactNativeBaseComponent<FocusableViewProps, {}> { }
+
+    /* if ever needed
+    interface TextProps extends RN.TextProps {
+        onFocus?                        : Function;
+        onBlur?                         : Function;
+    }
+
+    class Text extends RN.ReactNativeBaseComponent<TextProps, {}> { }
+    */
 }
