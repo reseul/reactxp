@@ -10,7 +10,7 @@
 import React = require('react');
 import Types = require('../common/Types');
 import {Text as TextBase} from '../native-common/Text';
-import EventHelpers from './utils/EventHelpers';
+import EventHelpers from '../native-desktop/utils/EventHelpers';
 import AccessibilityUtil from '../native-common/AccessibilityUtil';
 import RN = require('react-native');
 import RNW = require('react-native-windows');

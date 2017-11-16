@@ -15,7 +15,6 @@ import SubscribableEvent from 'subscribableevent';
 
 import { ModalContainer } from '../native-common/ModalContainer';
 import PopupContainerView from './PopupContainerView';
-import RootView from './RootView';
 import Types = require('../common/Types');
 
 class ModalStackContext {
@@ -112,7 +111,7 @@ export class FrontLayerViewManager {
         }
     }
 
-    public getModalLayerView(rootView: RootView): any {
+    public getModalLayerView(): any {
         const overlayContext = _.findLast(this._overlayStack, context => context instanceof ModalStackContext) as ModalStackContext;
 
         if (overlayContext) {
@@ -126,7 +125,7 @@ export class FrontLayerViewManager {
         return null;
     }
 
-    public getPopupLayerView(rootView: RootView): any {
+    public getPopupLayerView(): any {
         const overlayContext = _.findLast(this._overlayStack, context => context instanceof PopupStackContext) as PopupStackContext;
 
         if (overlayContext) {
@@ -165,15 +164,15 @@ export class FrontLayerViewManager {
                     activePopupContext.anchorHandle,
                     (x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
                         const touchEvent = (e.nativeEvent as any) as Types.TouchEvent;
-                        let anchorRect: ClientRect = { left: x, top: y, right: x + width, 
+                        let anchorRect: ClientRect = { left: x, top: y, right: x + width,
                                 bottom: y + height, width: width, height: height };
 
                         // Find out if the press event was on the anchor so we can notify the caller about it.
                         if (touchEvent.pageX >= anchorRect.left && touchEvent.pageX < anchorRect.right
                             && touchEvent.pageY >= anchorRect.top && touchEvent.pageY < anchorRect.bottom) {
-                            // Showing another animation while dimissing the popup creates a conflict in the 
+                            // Showing another animation while dimissing the popup creates a conflict in the
                             // UI making it not doing one of the two animations (i.e.: Opening an actionsheet
-                            // while dismissing a popup). We introduce this delay to make sure the popup 
+                            // while dismissing a popup). We introduce this delay to make sure the popup
                             // dimissing animation has finished before we call the event handler.
                             setTimeout(() => { activePopupContext.popupOptions.onAnchorPressed(e); }, 500);
                         }

@@ -81,8 +81,8 @@ export class RootView extends React.Component<{}, RootViewState> {
     }
 
     render() {
-        const modalLayerView = FrontLayerViewManager.getModalLayerView(this);
-        const popupLayerView = FrontLayerViewManager.getPopupLayerView(this);
+        const modalLayerView = FrontLayerViewManager.getModalLayerView();
+        const popupLayerView = FrontLayerViewManager.getPopupLayerView();
 
         // When showing a modal/popup we want to hide the mainView shown behind from an accessibility
         // standpoint to ensure that it won't get the focus and the screen reader's attention.

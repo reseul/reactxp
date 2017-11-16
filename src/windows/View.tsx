@@ -13,7 +13,7 @@ import Types = require('../common/Types');
 
 import {View as ViewCommon} from '../native-common/View';
 import Button from './Button';
-import EventHelpers from './utils/EventHelpers';
+import EventHelpers from '../native-desktop/utils/EventHelpers';
 
 export class View extends ViewCommon {
 

@@ -10,7 +10,7 @@
 import React = require('react');
 import Types = require('../common/Types');
 import {Button as ButtonBase} from '../native-common/Button';
-import EventHelpers from './utils/EventHelpers';
+import EventHelpers from '../native-desktop/utils/EventHelpers';
 import UserInterface from '../native-desktop/UserInterface';
 import RN = require('react-native');
 import RNW = require('react-native-windows');
