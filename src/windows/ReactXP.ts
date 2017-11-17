@@ -28,7 +28,7 @@ import { default as ClipboardImpl, Clipboard as ClipboardType } from '../native-
 import { default as GestureViewImpl, GestureView as GestureViewType } from './GestureView';
 import { default as InputImpl, Input as InputType } from '../native-desktop/Input';
 import { default as InternationalImpl, International as InternationalType } from '../native-common/International';
-import { default as LinkImpl, Link as LinkType } from '../native-common/Link';
+import { default as LinkImpl, Link as LinkType } from './Link';
 import { default as LinkingImpl, Linking as LinkingType } from './Linking';
 import { default as LocationImpl, Location as LocationType } from '../common/Location';
 import { default as ModalImpl, Modal as ModalType } from '../native-common/Modal';
@@ -41,7 +41,7 @@ import { default as StatusBarImpl, StatusBar as StatusBarType } from './StatusBa
 import { default as StorageImpl, Storage as StorageType } from '../native-common/Storage';
 import { default as StylesImpl, Styles as StylesType } from '../native-common/Styles';
 import { default as TextImpl, Text as TextType } from './Text';
-import { default as TextInputImpl, TextInput as TextInputType } from '../native-common/TextInput';
+import { default as TextInputImpl, TextInput as TextInputType } from './TextInput';
 import { default as UserInterfaceImpl, UserInterface as UserInterfaceType } from '../native-desktop/UserInterface';
 import { default as UserPresenceImpl, UserPresence as UserPresenceType } from '../native-common/UserPresence';
 import { default as ViewImpl, View as ViewType } from './View';

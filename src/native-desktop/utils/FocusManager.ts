@@ -4,20 +4,22 @@
 * Copyright (c) Microsoft Corporation. All rights reserved.
 * Licensed under the MIT license.
 *
-* Manages focusable elements for better keyboard navigation (web version)
+* Manages focusable elements for better keyboard navigation (RN desktop version)
 */
 
 import React = require('react');
-import ReactDOM = require('react-dom');
+import RN = require('react-native');
 import PropTypes = require('prop-types');
 
+import Types = require('../../common/Types');
+
 import {FocusManager as FocusManagerBase,
+    applyFocusableComponentMixin as applyFocusableComponentMixinBase,
     OriginalAttributeValues} from '../../common/utils/FocusManager';
 
 import UserInterface from '../UserInterface';
 
 const ATTR_NAME_TAB_INDEX = 'tabindex';
-const ATTR_NAME_ARIA_HIDDEN = 'aria-hidden';
 
 let _isNavigatingWithKeyboard: boolean;
 let _isShiftPressed: boolean;
@@ -26,86 +28,36 @@ UserInterface.keyboardNavigationEvent.subscribe(isNavigatingWithKeyboard => {
     _isNavigatingWithKeyboard = isNavigatingWithKeyboard;
 });
 
-import {applyFocusableComponentMixin, FocusableComponentStateCallback} from  '../../common/utils/FocusManager';
-export {applyFocusableComponentMixin, FocusableComponentStateCallback};
+import {FocusableComponentStateCallback} from  '../../common/utils/FocusManager';
+export {FocusableComponentStateCallback};
+
+export interface FocusManagerFocusableComponent {
+    onFocus(): void;
+    focus(): void;
+}
 
 export class FocusManager extends FocusManagerBase {
 
-    private static _resetFocusTimer: number;
-
-    constructor(parent: FocusManager) {
-        super(parent);
-    }
-
-    // Not really public
-    public static initListeners(): void {
-        // The default behaviour on Electron is to release the focus after the
-        // Tab key is pressed on a last focusable element in the page and focus
-        // the first focusable element on a consecutive Tab key press.
-        // We want to avoid losing this first Tab key press.
-        let _checkFocusTimer: number;
-
-        // Checking if Shift is pressed to move the focus into the right direction.
-        window.addEventListener('keydown', event => {
-            _isShiftPressed = event.shiftKey;
-        });
-        window.addEventListener('keyup', event => {
-            _isShiftPressed = event.shiftKey;
-        });
-
-        document.body.addEventListener('focusout', event => {
-            if (!_isNavigatingWithKeyboard || (event.target === document.body)) {
-                return;
-            }
-
-            if (_checkFocusTimer) {
-                clearTimeout(_checkFocusTimer);
-            }
-
-            if (FocusManager._skipFocusCheck) {
-                // When in between the FocusManager restrictions,
-                // don't check for the focus change here, FocusManager
-                // will take care of it.
-                FocusManager._skipFocusCheck = false;
-                return;
-            }
-
-            _checkFocusTimer = setTimeout(() => {
-            _checkFocusTimer = undefined;
-
-            if (_isNavigatingWithKeyboard &&
-                (!document.activeElement || (document.activeElement === document.body))) {
-                    // This should work for Electron and the browser should
-                    // send the focus to the address bar anyway.
-                    FocusManager.focusFirst(_isShiftPressed);
-                }
-            }, 0);
-        });
-    }
-
     protected /* static */ addFocusListenerOnComponent(component: React.Component<any, any>, onFocus: EventListener): void {
-        const el = ReactDOM.findDOMNode<HTMLElement>(component);
-        if (el) {
-            el.addEventListener('focus', onFocus);
-        }
+        // We intercept the private "_onFocus" all the focusable elements have to have
+        (component as any)._onFocusSink = onFocus;
     }
 
     protected /* static */ removeFocusListenerFromComponent(component: React.Component<any, any>, onFocus: EventListener): void {
-        const el = ReactDOM.findDOMNode<HTMLElement>(component);
-        if (el) {
-            el.removeEventListener('focus', onFocus);
-        }
+        (component as any)._onFocusSink = undefined;
     }
 
     protected /* static */ focusComponent(component: React.Component<any, any>): boolean {
-        const el = ReactDOM.findDOMNode<HTMLElement>(component);
-        if (el && el.focus) {
-            el.focus();
+        let fc = component as any as FocusManagerFocusableComponent;
+
+        if (fc && fc.focus) {
+            fc.focus();
             return true;
         }
         return false;
     }
 
+   /*
     private static focusFirst (last?: boolean) {
         const focusable = Object.keys(FocusManager._allFocusableComponents)
             .map(componentId => FocusManager._allFocusableComponents[componentId])
@@ -125,9 +77,11 @@ export class FocusManager extends FocusManagerBase {
 
             focusable[last ? focusable.length - 1 : 0].focus();
         }
-    }
+    } */
 
     protected /* static */ resetFocus() {
+
+        /*
         if (FocusManager._resetFocusTimer) {
             clearTimeout(FocusManager._resetFocusTimer);
             FocusManager._resetFocusTimer = undefined;
@@ -163,11 +117,13 @@ export class FocusManager extends FocusManagerBase {
             document.body.blur();
             FocusManager._setTabIndex(document.body, prevTabIndex);
         }
+
+        */
     }
 
     protected /* static */ _setComponentTabIndexAndAriaHidden(
             component: React.Component<any, any>, tabIndex: number, ariaHidden: string): OriginalAttributeValues {
-
+/*
         const el = ReactDOM.findDOMNode<HTMLElement>(component);
         return el ?
             {
@@ -175,9 +131,10 @@ export class FocusManager extends FocusManagerBase {
                 ariaHidden: FocusManager._setAriaHidden(el, ariaHidden)
             }
             :
-            null;
+            null;*/
+        return null;
     }
-
+/*
     private static _setTabIndex(element: HTMLElement, value: number): number {
         const prev = element.hasAttribute(ATTR_NAME_TAB_INDEX) ? element.tabIndex : undefined;
 
@@ -204,11 +161,36 @@ export class FocusManager extends FocusManagerBase {
         }
 
         return prev;
-    }
+    }*/
 }
 
-if ((typeof document !== 'undefined') && (typeof window !== 'undefined')) {
-    FocusManager.initListeners();
+export function applyFocusableComponentMixin(Component: any, isConditionallyFocusable?: Function) {
+    // Call base
+    applyFocusableComponentMixinBase(Component, isConditionallyFocusable);
+
+    inheritMethod('onFocus', function () {
+        if (this._onFocusSink) {
+            this._onFocusSink();
+        } else {
+            console.error('FocusableComponentMixin: focus sink error!');
+        }
+    });
+
+    function inheritMethod(methodName: string, action: Function) {
+        let origCallback = Component.prototype[methodName];
+
+        if (origCallback) {
+            Component.prototype[methodName] = function () {
+                action.call(this, arguments);
+
+                if (origCallback) {
+                    origCallback.apply(this, arguments);
+                }
+            };
+        } else {
+            console.error('FocusableComponentMixin: onFocus error!');
+        }
+    }
 }
 
 export default FocusManager;

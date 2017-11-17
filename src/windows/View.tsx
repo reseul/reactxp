@@ -10,16 +10,48 @@
 import React = require('react');
 import RN = require('react-native');
 import Types = require('../common/Types');
+import PropTypes = require('prop-types');
 
 import {View as ViewCommon} from '../native-common/View';
 import Button from './Button';
 import EventHelpers from '../native-desktop/utils/EventHelpers';
+import { FocusManager, applyFocusableComponentMixin } from '../native-desktop/utils/FocusManager';
 
-export class View extends ViewCommon {
+export interface ViewContext {
+    isRxParentAText?: boolean;
+    focusManager?: FocusManager;
+}
+
+export class View extends ViewCommon implements React.ChildContextProvider<ViewContext> {
+    static contextTypes: React.ValidationMap<any> = {
+        isRxParentAText: PropTypes.bool,
+        focusManager: PropTypes.object
+    };
+    context: ViewContext;
+
+    static childContextTypes: React.ValidationMap<any> = {
+        isRxParentAText: PropTypes.bool.isRequired,
+        focusManager: PropTypes.object
+    };
 
     private _onKeyDown: (e: Types.SyntheticEvent) => void;
 
     private _buttonElement: Button;
+
+    private _focusManager: FocusManager;
+    private _isFocusLimited: boolean;
+
+    constructor(props: Types.ViewProps, context: ViewContext) {
+        super(props);
+
+        if (props.restrictFocusWithin || props.limitFocusWithin) {
+            this._focusManager = new FocusManager(context && context.focusManager);
+
+            if (props.limitFocusWithin) {
+                this.setFocusLimited(true);
+            }
+        }
+    }
 
     protected _buildInternalProps(props: Types.ViewProps) {
 
@@ -85,7 +117,52 @@ export class View extends ViewCommon {
         }
     }
 
+    getChildContext() {
+        // Let descendant Types components know that their nearest Types ancestor is not an Types.Text.
+        // Because they're in an Types.View, they should use their normal styling rather than their
+        // special styling for appearing inline with text.
+        let childContext: ViewContext = {
+            isRxParentAText: false
+        };
+
+        // Provide the descendants with the focus manager (if any).
+        if (this._focusManager) {
+            childContext.focusManager = this._focusManager;
+        }
+
+        return childContext;
+    }
+
+    setFocusRestricted(restricted: boolean) {
+        if (!this._focusManager || !this.props.restrictFocusWithin) {
+            console.error('View: setFocusRestricted method requires restrictFocusWithin property to be set to true');
+            return;
+        }
+
+        if (restricted) {
+            this._focusManager.restrictFocusWithin();
+        } else {
+            this._focusManager.removeFocusRestriction();
+        }
+    }
+
+    setFocusLimited(limited: boolean) {
+        if (!this._focusManager || !this.props.limitFocusWithin) {
+            console.error('View: setFocusLimited method requires limitFocusWithin property to be set to true');
+            return;
+        }
+
+        if (limited && !this._isFocusLimited) {
+            this._isFocusLimited = true;
+            this._focusManager.limitFocusWithin();
+        } else if (!limited && this._isFocusLimited) {
+            this._isFocusLimited = false;
+            this._focusManager.removeFocusLimitation();
+        }
+    }
+
     private _onFocus = (e: React.SyntheticEvent): void => {
+        this.onFocus();
         if (this.props.onFocus) {
             this.props.onFocus(EventHelpers.toFocusEvent(e));
         }
@@ -96,6 +173,15 @@ export class View extends ViewCommon {
             this.props.onBlur(EventHelpers.toFocusEvent(e));
         }
     }
+
+    private onFocus() {
+        // Focus manager hook
+    }
 }
+
+applyFocusableComponentMixin(View, function (nextProps?: Types.ViewProps) {
+    let tabIndex: number = nextProps && ('tabIndex' in nextProps) ? nextProps.tabIndex : this.props.tabIndex;
+    return tabIndex !== undefined && tabIndex !== -1;
+});
 
 export default View;

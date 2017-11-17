@@ -54,7 +54,7 @@ export class Link extends React.Component<Types.LinkProps, {}> {
         if (this.props.onLongPress) {
             this.props.onLongPress(e, this.props.url);
         }
-    }    
+    }
 }
 
 export default Link;

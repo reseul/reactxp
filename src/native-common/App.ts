@@ -39,14 +39,16 @@ export class App extends RX.App {
     initialize(debug: boolean, development: boolean) {
         super.initialize(debug, development);
         window['rxdebug'] = debug;
-        RN.AppRegistry.registerComponent('RXApp', this.createRootView);
+        RN.AppRegistry.registerComponent('RXApp', this.getRootViewFactory());
     }
 
     getActivationState(): Types.AppActivationState {
         return _rnStateToRxState[RN.AppState.currentState];
     }
 
-    createRootView = () => RootView;
+    protected getRootViewFactory(): Function {
+        return () => RootView;
+    }
 }
 
 export default new App();

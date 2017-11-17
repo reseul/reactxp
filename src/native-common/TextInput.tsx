@@ -95,6 +95,7 @@ export class TextInput extends React.Component<Types.TextInputProps, TextInputSt
     }
 
     private _onFocus = (e: Types.FocusEvent) => {
+        this.onFocus();
         this.setState({ isFocused: true });
 
         if (this.props.onFocus) {
@@ -196,6 +197,10 @@ export class TextInput extends React.Component<Types.TextInputProps, TextInputSt
 
     setAccessibilityFocus() {
         AccessibilityUtil.setAccessibilityFocus(this);
+    }
+
+    private onFocus() {
+        // Focus manager hook
     }
 
     isFocused() {

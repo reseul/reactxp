@@ -102,7 +102,7 @@ if (typeof document !== 'undefined') {
     document.head.appendChild(style);
 }
 
-export class RootView extends React.Component<RootViewProps, RootViewState> {
+export class RootView extends React.Component<RootViewProps, RootViewState> implements React.ChildContextProvider<any> {
     static childContextTypes: React.ValidationMap<any> = {
         focusManager: PropTypes.object
     };

@@ -16,8 +16,9 @@ import Types = require('../common/Types');
 
 export class App extends AppCommon {
 
-    createRootView = () => RootView;
-
+    protected getRootViewFactory(): Function {
+        return () => RootView;
+    }
 }
 
 export default new App();

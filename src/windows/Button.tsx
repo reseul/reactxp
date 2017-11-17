@@ -14,6 +14,7 @@ import EventHelpers from '../native-desktop/utils/EventHelpers';
 import UserInterface from '../native-desktop/UserInterface';
 import RN = require('react-native');
 import RNW = require('react-native-windows');
+import { applyFocusableComponentMixin } from '../native-desktop/utils/FocusManager';
 
 const KEY_CODE_ENTER = 13;
 const KEY_CODE_SPACE = 32;
@@ -118,6 +119,7 @@ export class Button extends ButtonBase {
     }
 
     private _onFocus = (e: React.SyntheticEvent): void => {
+        this.onFocus();
         if (this.props.onFocus) {
             this.props.onFocus(EventHelpers.toFocusEvent(e));
         }
@@ -128,6 +130,12 @@ export class Button extends ButtonBase {
             this.props.onBlur(EventHelpers.toFocusEvent(e));
         }
     }
+
+    private onFocus() {
+        // Focus Manager hook
+    }
 }
+
+applyFocusableComponentMixin(Button);
 
 export default Button;

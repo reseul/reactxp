@@ -9,21 +9,35 @@
 import assert = require('assert');
 import React = require('react');
 import RN = require('react-native');
+import PropTypes = require('prop-types');
 
 import {RootView as RootViewCommon} from '../native-common/RootView';
 import Input from './Input';
 import UserInterface from './UserInterface';
 import EventHelpers from './utils/EventHelpers';
+import FocusManager from './utils/FocusManager';
 import { SyntheticEvent } from 'reactxp/src/common/Types';
 
 const KEY_CODE_TAB = 9;
 const KEY_CODE_ESC = 27;
 
-export class RootView extends RootViewCommon {
+export class RootView extends RootViewCommon implements React.ChildContextProvider<any> {
+    static childContextTypes: React.ValidationMap<any> = {
+        focusManager: PropTypes.object
+    };
 
+    private _focusManager: FocusManager;
     private _keyboardHandlerInstalled = false;
     private _isNavigatingWithKeyboard: boolean = false;
     private _isNavigatingWithKeyboardUpateTimer: number;
+
+    constructor() {
+        super();
+
+        // Initialize the root FocusManager which is aware of all
+        // focusable elements.
+        this._focusManager = new FocusManager(null);
+    }
 
     private _onTouchStartCapture = (e: SyntheticEvent) => {
         this._updateKeyboardNavigationState(false);
@@ -99,6 +113,13 @@ export class RootView extends RootViewCommon {
         Input.dispatchKeyUp(kbdEvent);
     }
 
+    getChildContext() {
+        // Provide the context with root FocusManager to all descendants.
+        return {
+            focusManager: this._focusManager
+        };
+    }
+
     render() {
         let content = super.render();
 
@@ -117,4 +138,4 @@ export class RootView extends RootViewCommon {
     }
 }
 
-export default new RootView();
+export default RootView;

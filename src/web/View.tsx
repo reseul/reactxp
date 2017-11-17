@@ -71,7 +71,7 @@ export interface ViewContext {
     focusManager?: FocusManager;
 }
 
-export class View extends ViewBase<Types.ViewProps, {}> {
+export class View extends ViewBase<Types.ViewProps, {}> implements React.ChildContextProvider<ViewContext> {
     static contextTypes: React.ValidationMap<any> = {
         isRxParentAText: PropTypes.bool,
         focusManager: PropTypes.object
