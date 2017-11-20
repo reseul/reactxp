@@ -63,8 +63,7 @@ export abstract class FocusManager {
 
     // protected abstract /* static */ focusFirst(last?: boolean): void;
     protected abstract /* static */ resetFocus() : void;
-    protected abstract /* static */ _setComponentTabIndexAndAriaHidden(
-        component: React.Component<any, any>, tabIndex: number, ariaHidden: string): OriginalAttributeValues ;
+    protected abstract /* static */ _updateComponentFocusRestriction(storedComponent: StoredFocusableComponent): void;
 
     // Whenever the focusable element is mounted, we let the application
     // know so that FocusManager could account for this element during the
@@ -298,7 +297,7 @@ export abstract class FocusManager {
         return null;
     }
 
-    private static _callFocusableComponentStateChangeCallbacks(storedComponent: StoredFocusableComponent, restrictedOrLimited: boolean) {
+    protected static _callFocusableComponentStateChangeCallbacks(storedComponent: StoredFocusableComponent, restrictedOrLimited: boolean) {
         if (!storedComponent.callbacks) {
             return;
         }
@@ -321,21 +320,6 @@ export abstract class FocusManager {
             clearTimeout(FocusManager._restoreRestrictionTimer);
             FocusManager._restoreRestrictionTimer = undefined;
             FocusManager._pendingPrevFocusedComponent = undefined;
-        }
-    }
-
-    private /* static */  _updateComponentFocusRestriction(storedComponent: StoredFocusableComponent) {
-        if ((storedComponent.restricted || (storedComponent.limitedCount > 0)) && !('origTabIndex' in storedComponent)) {
-            const origValues = this._setComponentTabIndexAndAriaHidden(storedComponent.component, -1, 'true');
-            storedComponent.origTabIndex = origValues ? origValues.tabIndex : undefined;
-            storedComponent.origAriaHidden = origValues ? origValues.ariaHidden : undefined;
-            FocusManager._callFocusableComponentStateChangeCallbacks(storedComponent, true);
-        } else if (!storedComponent.restricted && !storedComponent.limitedCount && ('origTabIndex' in storedComponent)) {
-            this._setComponentTabIndexAndAriaHidden(storedComponent.component,
-                    storedComponent.origTabIndex, storedComponent.origAriaHidden);
-            delete storedComponent.origTabIndex;
-            delete storedComponent.origAriaHidden;
-            FocusManager._callFocusableComponentStateChangeCallbacks(storedComponent, false);
         }
     }
 }

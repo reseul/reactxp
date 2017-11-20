@@ -12,6 +12,7 @@ import ReactDOM = require('react-dom');
 import PropTypes = require('prop-types');
 
 import {FocusManager as FocusManagerBase,
+    StoredFocusableComponent,
     OriginalAttributeValues} from '../../common/utils/FocusManager';
 
 import UserInterface from '../UserInterface';
@@ -165,7 +166,22 @@ export class FocusManager extends FocusManagerBase {
         }
     }
 
-    protected /* static */ _setComponentTabIndexAndAriaHidden(
+    protected /* static */  _updateComponentFocusRestriction(storedComponent: StoredFocusableComponent) {
+        if ((storedComponent.restricted || (storedComponent.limitedCount > 0)) && !('origTabIndex' in storedComponent)) {
+            const origValues = FocusManager._setComponentTabIndexAndAriaHidden(storedComponent.component, -1, 'true');
+            storedComponent.origTabIndex = origValues ? origValues.tabIndex : undefined;
+            storedComponent.origAriaHidden = origValues ? origValues.ariaHidden : undefined;
+            FocusManager._callFocusableComponentStateChangeCallbacks(storedComponent, true);
+        } else if (!storedComponent.restricted && !storedComponent.limitedCount && ('origTabIndex' in storedComponent)) {
+            FocusManager._setComponentTabIndexAndAriaHidden(storedComponent.component,
+                    storedComponent.origTabIndex, storedComponent.origAriaHidden);
+            delete storedComponent.origTabIndex;
+            delete storedComponent.origAriaHidden;
+            FocusManager._callFocusableComponentStateChangeCallbacks(storedComponent, false);
+        }
+    }
+
+    private static  _setComponentTabIndexAndAriaHidden(
             component: React.Component<any, any>, tabIndex: number, ariaHidden: string): OriginalAttributeValues {
 
         const el = ReactDOM.findDOMNode<HTMLElement>(component);

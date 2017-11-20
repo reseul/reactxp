@@ -1,23 +1,20 @@
-﻿/**
+/**
 * ScrollView.tsx
 *
 * Copyright (c) Microsoft Corporation. All rights reserved.
 * Licensed under the MIT license.
 *
-* RN-specific implementation of the cross-platform ScrollView abstraction.
+* RN Desktop-specific implementation of the cross-platform ScrollView abstraction.
 */
 
 import React = require('react');
 import RN = require('react-native');
+import RNW = require('react-native-windows');
+import {ScrollView as ScrollViewBase} from '../native-common/ScrollView';
 
-import RX = require('../common/Interfaces');
-import Types = require('../common/Types');
-import ViewBase from './ViewBase';
+import EventHelpers from '../native-desktop/utils/EventHelpers';
 
-export class ScrollView extends ViewBase<Types.ScrollViewProps, {}> implements RX.IScrollView {
-    private _scrollTop = 0;
-    private _scrollLeft = 0;
-    protected _nativeView: RN.ScrollView = null;
+export class ScrollView extends ScrollViewBase {
 
     render() {
         let scrollThrottle = this.props.scrollEventThrottle || 16;
@@ -37,7 +34,15 @@ export class ScrollView extends ViewBase<Types.ScrollViewProps, {}> implements R
                 this._onScroll :
                 null;
 
-        const keyboardShouldPersistTaps = this.props.keyboardShouldPersistTaps ? 'always' : 'never';
+        var onKeyDownCallback = this.props.onKeyPress ?
+                // We have a callback function, call the wrapper
+                this._onKeyDown :
+                null;
+
+        // TODO: #737970 Remove special case for UWP when this bug is fixed. The bug
+        //   causes you to have to click twice instead of once on some pieces of UI in
+        //   order for the UI to acknowledge your interaction.
+        const keyboardShouldPersistTaps = 'always'; // this.props.keyboardShouldPersistTaps ? 'always' : 'never'
 
         // NOTE: We are setting `automaticallyAdjustContentInsets` to false
         // (http://facebook.github.io/react-native/docs/scrollview.html#automaticallyadjustcontentinsets). The
@@ -50,7 +55,7 @@ export class ScrollView extends ViewBase<Types.ScrollViewProps, {}> implements R
         // We also set removeClippedSubviews to false, overriding the default value. Most of the scroll views
         // we use are virtualized anyway.
         return (
-            <RN.ScrollView
+            <RNW.ScrollView
                 ref={this._setNativeView}
                 style={ this.props.style }
                 onScroll={ scrollCallback }
@@ -74,53 +79,20 @@ export class ScrollView extends ViewBase<Types.ScrollViewProps, {}> implements R
                 scrollIndicatorInsets={ this.props.scrollIndicatorInsets }
                 onScrollBeginDrag={ this.props.onScrollBeginDrag }
                 onScrollEndDrag={ this.props.onScrollEndDrag }
+                onKeyDown={ onKeyDownCallback }
             >
                 { this.props.children }
-            </RN.ScrollView>
+            </RNW.ScrollView>
         );
     }
 
-    protected _onScroll = (event: React.SyntheticEvent) => {
-        const nativeEvent = event.nativeEvent as any;
-        this._scrollTop = nativeEvent.contentOffset.y;
-        this._scrollLeft = nativeEvent.contentOffset.x;
-
-        if (this.props.onScroll) {
-            this.props.onScroll(this._scrollTop, this._scrollLeft);
+    private _onKeyDown = (e: React.SyntheticEvent) => {
+        if (this.props.onKeyPress) {
+            this.props.onKeyPress(EventHelpers.toKeyboardEvent(e));
         }
-    }
-
-    setScrollTop(scrollTop: number, animate: boolean): void {
-        if (this._nativeView) {
-            this._nativeView.scrollTo(
-                { x: this._scrollLeft, y: scrollTop, animated: animate });
-        }
-    }
-
-    setScrollLeft(scrollLeft: number, animate: boolean): void {
-        if (this._nativeView) {
-            this._nativeView.scrollTo(
-                { x: scrollLeft, y: this._scrollTop, animated: animate });
-        }
-    }
-
-    addToScrollTop(deltaTop: number, animate: boolean): void {
-        if (this._nativeView) {
-            this._nativeView.scrollBy(
-                { deltaX: 0, deltaY: deltaTop, animated: animate });
-        }
-    }
-
-    addToScrollLeft(deltaLeft: number, animate: boolean): void {
-        if (this._nativeView) {
-            this._nativeView.scrollBy(
-                { deltaX: deltaLeft, deltaY: 0, animated: animate });
-        }
-    }
-
-    static useCustomScrollbars() {
-        // not needed
     }
 }
+
+RNW.ScrollView = RN.ScrollView;
 
 export default ScrollView;

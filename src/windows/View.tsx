@@ -15,7 +15,7 @@ import PropTypes = require('prop-types');
 import {View as ViewCommon} from '../native-common/View';
 import Button from './Button';
 import EventHelpers from '../native-desktop/utils/EventHelpers';
-import { FocusManager, applyFocusableComponentMixin } from '../native-desktop/utils/FocusManager';
+import { FocusManager } from '../native-desktop/utils/FocusManager';
 
 export interface ViewContext {
     isRxParentAText?: boolean;
@@ -50,6 +50,34 @@ export class View extends ViewCommon implements React.ChildContextProvider<ViewC
             if (props.limitFocusWithin) {
                 this.setFocusLimited(true);
             }
+        }
+    }
+
+    componentWillReceiveProps(nextProps: Types.ViewProps) {
+        super.componentWillReceiveProps(nextProps);
+
+        if (!!this.props.restrictFocusWithin !== !!nextProps.restrictFocusWithin) {
+            console.error('View: restrictFocusWithin is readonly and changing it during the component life cycle has no effect');
+        } else if (!!this.props.limitFocusWithin !== !!nextProps.limitFocusWithin) {
+            console.error('View: limitFocusWithin is readonly and changing it during the component life cycle has no effect');
+        }
+    }
+
+    componentDidMount() {
+        if (this._focusManager) {
+            if (this.props.restrictFocusWithin) {
+                this._focusManager.restrictFocusWithin();
+            }
+
+            if (this.props.limitFocusWithin && this._isFocusLimited) {
+                this._focusManager.limitFocusWithin();
+            }
+        }
+    }
+
+    componentWillUnmount() {
+        if (this._focusManager) {
+            this._focusManager.release();
         }
     }
 
@@ -162,7 +190,6 @@ export class View extends ViewCommon implements React.ChildContextProvider<ViewC
     }
 
     private _onFocus = (e: React.SyntheticEvent): void => {
-        this.onFocus();
         if (this.props.onFocus) {
             this.props.onFocus(EventHelpers.toFocusEvent(e));
         }
@@ -173,15 +200,8 @@ export class View extends ViewCommon implements React.ChildContextProvider<ViewC
             this.props.onBlur(EventHelpers.toFocusEvent(e));
         }
     }
-
-    private onFocus() {
-        // Focus manager hook
-    }
 }
 
-applyFocusableComponentMixin(View, function (nextProps?: Types.ViewProps) {
-    let tabIndex: number = nextProps && ('tabIndex' in nextProps) ? nextProps.tabIndex : this.props.tabIndex;
-    return tabIndex !== undefined && tabIndex !== -1;
-});
+// No focus manager mixin is needed here since the button like views delegate to RX.Button
 
 export default View;

@@ -15,6 +15,7 @@ import Types = require('../../common/Types');
 
 import {FocusManager as FocusManagerBase,
     applyFocusableComponentMixin as applyFocusableComponentMixinBase,
+    StoredFocusableComponent,
     OriginalAttributeValues} from '../../common/utils/FocusManager';
 
 import UserInterface from '../UserInterface';
@@ -31,7 +32,12 @@ UserInterface.keyboardNavigationEvent.subscribe(isNavigatingWithKeyboard => {
 import {FocusableComponentStateCallback} from  '../../common/utils/FocusManager';
 export {FocusableComponentStateCallback};
 
+export interface FocusManagerFocusableComponentState {
+    overridenTabIndex?: number;
+}
+
 export interface FocusManagerFocusableComponent {
+    getTabIndex(): number | undefined;
     onFocus(): void;
     focus(): void;
 }
@@ -121,74 +127,111 @@ export class FocusManager extends FocusManagerBase {
         */
     }
 
-    protected /* static */ _setComponentTabIndexAndAriaHidden(
-            component: React.Component<any, any>, tabIndex: number, ariaHidden: string): OriginalAttributeValues {
-/*
-        const el = ReactDOM.findDOMNode<HTMLElement>(component);
-        return el ?
-            {
-                tabIndex: FocusManager._setTabIndex(el, tabIndex),
-                ariaHidden: FocusManager._setAriaHidden(el, ariaHidden)
-            }
-            :
-            null;*/
-        return null;
-    }
-/*
-    private static _setTabIndex(element: HTMLElement, value: number): number {
-        const prev = element.hasAttribute(ATTR_NAME_TAB_INDEX) ? element.tabIndex : undefined;
-
-        if (value === undefined) {
-            if (prev !== undefined) {
-                element.removeAttribute(ATTR_NAME_TAB_INDEX);
-            }
-        } else {
-            element.tabIndex = value;
+    protected /* static */  _updateComponentFocusRestriction(storedComponent: StoredFocusableComponent) {
+        if ((storedComponent.restricted || (storedComponent.limitedCount > 0)) && !('origTabIndex' in storedComponent)) {
+            storedComponent.origTabIndex = FocusManager._setComponentTabIndexOverride(storedComponent.component, -1);
+            FocusManager._callFocusableComponentStateChangeCallbacks(storedComponent, true);
+        } else if (!storedComponent.restricted && !storedComponent.limitedCount && ('origTabIndex' in storedComponent)) {
+            FocusManager._removeComponentTabIndexOverride(storedComponent.component);
+            delete storedComponent.origTabIndex;
+            FocusManager._callFocusableComponentStateChangeCallbacks(storedComponent, false);
         }
-
-        return prev;
     }
 
-    private static _setAriaHidden(element: HTMLElement, value: string): string {
-        const prev = element.hasAttribute(ATTR_NAME_ARIA_HIDDEN) ? element.getAttribute(ATTR_NAME_ARIA_HIDDEN) : undefined;
+    private  static  _setComponentTabIndexOverride(
+            component: React.Component<any, any>, tabIndex: number): number {
 
-        if (value === undefined) {
-            if (prev !== undefined) {
-                element.removeAttribute(ATTR_NAME_ARIA_HIDDEN);
-            }
-        } else {
-            element.setAttribute(ATTR_NAME_ARIA_HIDDEN, value);
+        if ((component as any).setTabIndexOverride) {
+            return (component as any).setTabIndexOverride(tabIndex);
         }
+        return undefined;
+    }
 
-        return prev;
-    }*/
+    private  static  _removeComponentTabIndexOverride(
+            component: React.Component<any, any>): void {
+        if ((component as any).removeTabIndexOverride) {
+            return (component as any).removeTabIndexOverride();
+        }
+    }
 }
 
 export function applyFocusableComponentMixin(Component: any, isConditionallyFocusable?: Function) {
     // Call base
     applyFocusableComponentMixinBase(Component, isConditionallyFocusable);
 
-    inheritMethod('onFocus', function () {
+    // Hook 'onFocus'
+    inheritMethod('onFocus', function (origCallback: Function) {
         if (this._onFocusSink) {
             this._onFocusSink();
         } else {
             console.error('FocusableComponentMixin: focus sink error!');
         }
-    });
-
-    function inheritMethod(methodName: string, action: Function) {
-        let origCallback = Component.prototype[methodName];
 
         if (origCallback) {
-            Component.prototype[methodName] = function () {
-                action.call(this, arguments);
+            origCallback.apply(this);
+        }
+    });
 
-                if (origCallback) {
-                    origCallback.apply(this, arguments);
-                }
+    // Hook 'getTabIndex'
+    inheritMethod('getTabIndex', function (origCallback: any, ...args: any[]) {
+        // Check override available
+        let state = this.state as FocusManagerFocusableComponentState;
+        if (state.overridenTabIndex !== undefined) {
+            // Override available, use this one
+            return state.overridenTabIndex;
+        } else {
+            // Override not available, defer to original handler to return the prop
+            return origCallback.apply(this);
+        }
+    });
+
+    // Hook 'shouldUpdateComponent'
+    inheritMethod('shouldComponentUpdate', function (origCallback: any, nextProps: any, nextState: any) {
+        // Check original callback
+        if (origCallback) {
+            // Return fast if effective tabIndex changed
+            let nextTabIndex = (nextState as FocusManagerFocusableComponentState).overridenTabIndex !== undefined ?
+            (nextState as FocusManagerFocusableComponentState).overridenTabIndex : nextState.tabIndex;
+
+            if (this.getTabIndex && nextTabIndex !== this.getTabIndex()) {
+                return true;
+            }
+
+            // Defer to original callback
+            return origCallback.apply(this, nextProps, nextState);
+        } else {
+            // There's no way to optimize by detecting when the component update is happening solely because of an override of
+            // a -1 with another -1.
+            // We're defaulting to the safe approach
+            return true;
+        }
+
+    }, true);
+
+    // Implement 'setTabIndexOverride'
+    inheritMethod('setTabIndexOverride', function (origCallback: any, args: any[]) {
+        this.setState((prevState: any, props: any) => {
+            return {overridenTabIndex: args[0]};
+        });
+    }, true);
+
+    // Implement 'removeTabIndexOverride'
+    inheritMethod('removeTabIndexOverride', function (origCallback: any) {
+        this.setState((prevState: any, props: any) => {
+            let undef: number = undefined; // Ideally we'd like to remove the key, but there's no way.
+            return {overridenTabIndex: undef};
+        });
+    }, true);
+
+    function inheritMethod(methodName: string, action: Function, optional?: boolean) {
+        let origCallback = Component.prototype[methodName];
+
+        if (origCallback || optional) {
+            Component.prototype[methodName] = function () {
+                return action.call(this, origCallback, arguments);
             };
         } else {
-            console.error('FocusableComponentMixin: onFocus error!');
+            console.error('FocusableComponentMixin: ' + methodName + ' error!');
         }
     }
 }

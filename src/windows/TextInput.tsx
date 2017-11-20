@@ -15,7 +15,7 @@ import {applyFocusableComponentMixin} from '../native-desktop/utils/FocusManager
 
 import {TextInput} from '../native-common/TextInput';
 
-applyFocusableComponentMixin(TextInput);
+//applyFocusableComponentMixin(TextInput);
 
 export {TextInput};
 export default TextInput;

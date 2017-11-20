@@ -14,7 +14,7 @@ import EventHelpers from '../native-desktop/utils/EventHelpers';
 import UserInterface from '../native-desktop/UserInterface';
 import RN = require('react-native');
 import RNW = require('react-native-windows');
-import { applyFocusableComponentMixin } from '../native-desktop/utils/FocusManager';
+import { applyFocusableComponentMixin, FocusManagerFocusableComponent } from '../native-desktop/utils/FocusManager';
 
 const KEY_CODE_ENTER = 13;
 const KEY_CODE_SPACE = 32;
@@ -30,7 +30,7 @@ UserInterface.keyboardNavigationEvent.subscribe(isNavigatingWithKeyboard => {
     _isNavigatingWithKeyboard = isNavigatingWithKeyboard;
 });
 
-export class Button extends ButtonBase {
+export class Button extends ButtonBase implements FocusManagerFocusableComponent {
 
     protected _buttonElement : RNW.FocusableViewWindows = null;
 
@@ -46,7 +46,7 @@ export class Button extends ButtonBase {
 
     protected _render(internalProps: any): JSX.Element {
 
-        let tabIndex: number = this.props.tabIndex || 0;
+        let tabIndex: number = this.getTabIndex() || 0;
         let windowsTabFocusable: boolean = !this.props.disabled && tabIndex >= 0;
 
         let focusableViewProps: RNW.FocusableViewProps = {
@@ -131,8 +131,13 @@ export class Button extends ButtonBase {
         }
     }
 
-    private onFocus() {
+    onFocus() {
         // Focus Manager hook
+    }
+
+    getTabIndex(): number | undefined {
+        // Focus Manager may override this
+        return this.props.tabIndex;
     }
 }
 

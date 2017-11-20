@@ -21,6 +21,6 @@ export class Link extends LinkCommon {
     }
 }
 
-applyFocusableComponentMixin(Link);
+//applyFocusableComponentMixin(Link);
 
 export default Link;

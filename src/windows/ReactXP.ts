@@ -36,7 +36,7 @@ import { default as NavigatorImpl, Navigator as NavigatorType } from '../native-
 import { default as NetworkImpl, Network as NetworkType } from '../native-common/Network';
 import { default as PlatformImpl, Platform as PlatformType } from '../native-common/Platform';
 import { default as PopupImpl, Popup as PopupType } from '../native-common/Popup';
-import { default as ScrollViewImpl, ScrollView as ScrollViewType } from '../native-common/ScrollView';
+import { default as ScrollViewImpl, ScrollView as ScrollViewType } from './ScrollView';
 import { default as StatusBarImpl, StatusBar as StatusBarType } from './StatusBar';
 import { default as StorageImpl, Storage as StorageType } from '../native-common/Storage';
 import { default as StylesImpl, Styles as StylesType } from '../native-common/Styles';
