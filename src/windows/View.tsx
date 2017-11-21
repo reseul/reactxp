@@ -105,12 +105,12 @@ export class View extends ViewCommon implements React.ChildContextProvider<ViewC
 
     protected _isButton (viewProps: Types.ViewProps): boolean {
         // In addition to the general criteria (views with onPress or onLongPress are buttons)
-        // we take into account the onKeyPress handler:
-        // - views with defined onKeyPress and defined tabIndex are buttons
-        // - views with defined onKeyPress and undefined tabIndex remain views, and the handler relies on
-        // bubbled "onKeyDown" react events from children
+        // we take into account the any non-undefined tabIndex
+        // - views with defined tabIndex become buttons
+        // - views with undefined tabIndex remain views, and the handlers relies on
+        // bubbled "onKeyDown"/etc. react events from children
         return super._isButton(viewProps) ||
-            (!!viewProps.onKeyPress && viewProps.tabIndex !== undefined);
+            (viewProps.tabIndex !== undefined);
     }
 
     protected _renderButton() : JSX.Element {

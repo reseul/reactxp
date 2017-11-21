@@ -16,11 +16,13 @@ import {Animated as AnimatedBase} from '../native-common/Animated';
 
 var ReactAnimatedView = RN.Animated.createAnimatedComponent(RXView);
 
+const refName = 'animatedComponent';
+
 export class AnimatedView extends AnimatedBase.View {
     render() {
         return (
             <ReactAnimatedView
-                ref='nativeComponent'
+                ref={ refName }
                 { ...this.props }
                 style={ this.props.style }
             >
@@ -30,25 +32,31 @@ export class AnimatedView extends AnimatedBase.View {
     }
 
     focus() {
-        const nativeComponent = this.refs['nativeComponent'] as any;
-        if (nativeComponent && nativeComponent._component) {
-            nativeComponent._component.focus();
+        const animatedComponent = this.refs[refName] as any;
+        if (animatedComponent && animatedComponent._component) {
+            animatedComponent._component.focus();
         }
     }
 
     blur() {
-        const nativeComponent = this.refs['nativeComponent'] as any;
-        if (nativeComponent && nativeComponent._component) {
-            nativeComponent._component.blur();
+        const animatedComponent = this.refs[refName] as any;
+        if (animatedComponent && animatedComponent._component) {
+            animatedComponent._component.blur();
         }
     }
 
     setFocusRestricted(restricted: boolean) {
-        // Nothing to do for now
+        const animatedComponent = this.refs[refName] as any;
+        if (animatedComponent && animatedComponent._component) {
+            animatedComponent._component.setFocusRestricted(restricted);
+        }
     }
 
     setFocusLimited(limited: boolean) {
-        // Nothing to do for now
+        const animatedComponent = this.refs[refName] as any;
+        if (animatedComponent && animatedComponent._component) {
+            animatedComponent._component.setFocusLimited(limited);
+        }
     }
 }
 
