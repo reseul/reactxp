@@ -11,14 +11,25 @@ import React = require('react');
 import RN = require('react-native');
 import RX = require('../common/Interfaces');
 import Types = require('../common/Types');
-import RXView from './View';
+import RXView from '../native-common/View';
 import {Animated as AnimatedBase} from '../native-common/Animated';
 
-var ReactAnimatedView = RN.Animated.createAnimatedComponent(RXView);
+var ReactAnimatedView = RN.Animated.createAnimatedComponent(RXView, true);
 
 const refName = 'animatedComponent';
 
-export class AnimatedView extends AnimatedBase.View {
+export class AnimatedView extends RX.AnimatedView {
+
+    setNativeProps(props: Types.AnimatedViewProps) {
+        const animatedComponent = this.refs[refName] as any;
+        if (animatedComponent) {
+            if (!animatedComponent.setNativeProps) {
+                throw 'Component does not implement setNativeProps';
+            }
+            animatedComponent.setNativeProps(props);
+        }
+    }
+
     render() {
         return (
             <ReactAnimatedView

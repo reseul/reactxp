@@ -32,16 +32,10 @@ UserInterface.keyboardNavigationEvent.subscribe(isNavigatingWithKeyboard => {
 
 export class Button extends ButtonBase implements FocusManagerFocusableComponent {
 
-    protected _buttonElement : RNW.FocusableViewWindows = null;
+    private _focusableElement : RNW.FocusableViewWindows = null;
 
-    protected _onButtonRef = (btn: RNW.FocusableViewWindows): void => {
-        this._buttonElement = btn;
-    }
-
-    setNativeProps(nativeProps: RNW.FocusableViewProps) {
-        if (this._buttonElement) {
-            this._buttonElement.setNativeProps(nativeProps);
-        }
+    private _onFocusableRef = (btn: RNW.FocusableViewWindows): void => {
+        this._focusableElement = btn;
     }
 
     protected _render(internalProps: any): JSX.Element {
@@ -50,7 +44,7 @@ export class Button extends ButtonBase implements FocusManagerFocusableComponent
         let windowsTabFocusable: boolean = !this.props.disabled && tabIndex >= 0;
 
         let focusableViewProps: RNW.FocusableViewProps = {
-            ref: this._onButtonRef,
+            ref: this._onFocusableRef,
             isTabStop: windowsTabFocusable,
             tabIndex: tabIndex,
             handledKeyDownKeys: DOWN_KEYCODES,
@@ -76,16 +70,16 @@ export class Button extends ButtonBase implements FocusManagerFocusableComponent
 
     focus() {
         super.focus();
-        if (this._buttonElement && this._buttonElement.focus) {
-            this._buttonElement.focus();
+        if (this._focusableElement && this._focusableElement.focus) {
+            this._focusableElement.focus();
         }
 
     }
 
     blur() {
         super.blur();
-        if (this._buttonElement && this._buttonElement.blur) {
-            this._buttonElement.blur();
+        if (this._focusableElement && this._focusableElement.blur) {
+            this._focusableElement.blur();
         }
    }
 
