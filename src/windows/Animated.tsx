@@ -11,7 +11,7 @@ import React = require('react');
 import RN = require('react-native');
 import RX = require('../common/Interfaces');
 import Types = require('../common/Types');
-import RXView from '../native-common/View';
+import RXView from './View';
 import {Animated as AnimatedBase} from '../native-common/Animated';
 
 var ReactAnimatedView = RN.Animated.createAnimatedComponent(RXView, true);

@@ -28,9 +28,16 @@ declare module 'react-native-windows' {
         handledKeyUpKeys?               : number[];
         onKeyDown?                      : Function;
         onKeyUp?                        : Function;
-     }
+    }
 
-    class FocusableViewWindows extends RN.ReactNativeBaseComponent<FocusableViewProps, {}> { }
+    interface SplitStyle {
+        focusableStyle: RN.StyleRuleSet;
+        childStyle: RN.StyleRuleSet;
+    }
+
+    class FocusableViewWindows extends RN.ReactNativeBaseComponent<FocusableViewProps, {}> {
+        static splitStyle(style: RN.StyleRuleSet | RN.StyleRuleSet[]) : SplitStyle;
+    }
 
     interface ScrollViewProps extends RN.ScrollViewProps {
         onKeyDown?                      : Function;

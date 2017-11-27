@@ -43,6 +43,8 @@ export class Button extends ButtonBase implements FocusManagerFocusableComponent
         let tabIndex: number = this.getTabIndex() || 0;
         let windowsTabFocusable: boolean = !this.props.disabled && tabIndex >= 0;
 
+        let splitStyle = RNW.FocusableViewWindows.splitStyle(internalProps.style);
+
         let focusableViewProps: RNW.FocusableViewProps = {
             ref: this._onFocusableRef,
             isTabStop: windowsTabFocusable,
@@ -58,9 +60,11 @@ export class Button extends ButtonBase implements FocusManagerFocusableComponent
         return (
             <RNW.FocusableViewWindows
                 {...focusableViewProps}
+                style = {[splitStyle.focusableStyle]}
             >
                 <RN.Animated.View
                     {...internalProps}
+                    style = {[splitStyle.childStyle]}
                 >
                     { this.props.children }
                 </RN.Animated.View>
