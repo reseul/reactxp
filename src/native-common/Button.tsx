@@ -89,7 +89,7 @@ export class Button extends React.Component<Types.ButtonProps, {}> {
         return (
             <RN.Animated.View
                 {...internalProps}
-            >
+             >
                 { this.props.children }
             </RN.Animated.View>
         );
@@ -106,10 +106,16 @@ export class Button extends React.Component<Types.ButtonProps, {}> {
 
         const opacityStyle = !this.props.disableTouchOpacityAnimation && this._opacityAnimatedStyle;
 
+        let layoutCallback = (this.props as any).onLayout ?
+            // We have a callback function
+            // TODO: make this a first class citizen in button
+            (this.props as any).onLayout :
+            null;
+
         let _internalProps: any = {
             ref: this._onButtonRef,
             style: Styles.combine([_styles.defaultButton, this.props.style, opacityStyle,
-                this.props.disabled && _styles.disabled]),
+                            this.props.disabled && _styles.disabled]),
             accessibilityLabel: this.props.accessibilityLabel || this.props.title,
             accessibilityTraits: accessibilityTrait,
             accessibilityComponentType: accessibilityComponentType,
@@ -121,7 +127,8 @@ export class Button extends React.Component<Types.ButtonProps, {}> {
             onResponderRelease: this.touchableHandleResponderRelease,
             onResponderTerminate: this.touchableHandleResponderTerminate,
             shouldRasterizeIOS: this.props.shouldRasterizeIOS,
-            onAccessibilityTapIOS: this.props.onAccessibilityTapIOS
+            onAccessibilityTapIOS: this.props.onAccessibilityTapIOS,
+            onLayout: layoutCallback
         };
 
         return this._render(_internalProps);

@@ -120,11 +120,20 @@ export class View extends ViewCommon implements React.ChildContextProvider<ViewC
                 <Button { ...this._internalProps }
                         onFocus = {this._onFocus}
                         onBlur = {this._onBlur}
-                        ref = {(ref: Button) => this._buttonElement = ref}
+                        ref = {this._setButtonElement}
                         >
                     { this.props.children }
                 </Button>
             );
+    }
+
+    private _setButtonElement = (ref: Button) => {
+        this._buttonElement = ref;
+
+        // The current ref function overrides the original handler (ViewBase::_setNativeView), so we have to push this "Button"
+        // as an "RN.View" for various subtle animations to continue working.
+        // The choice of types is not fantastic, an interface with just setNativeProps would've been more honest (TODO).
+        this._setNativeView(ref as any as RN.View);
     }
 
     focus() {

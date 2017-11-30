@@ -21,6 +21,12 @@ import { SyntheticEvent } from 'reactxp/src/common/Types';
 const KEY_CODE_TAB = 9;
 const KEY_CODE_ESC = 27;
 
+const styles = RN.StyleSheet.create({
+    appWrapper: {
+      flex: 1,
+    },
+  });
+
 export class RootView extends RootViewCommon implements React.ChildContextProvider<any> {
     static childContextTypes: React.ValidationMap<any> = {
         focusManager: PropTypes.object
@@ -130,10 +136,13 @@ export class RootView extends RootViewCommon implements React.ChildContextProvid
             onTouchStartCapture: this._onTouchStartCapture
         };
 
-        return (
-            <RN.View {...internalProps}>
+        return (
+            <RN.View 
+                {...internalProps}
+                style={styles.appWrapper}
+            >
                 {content}
-            </RN.View>
+            </RN.View>
         );
     }
 }

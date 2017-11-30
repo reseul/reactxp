@@ -36,7 +36,6 @@ declare module 'react-native-windows' {
     }
 
     class FocusableViewWindows extends RN.ReactNativeBaseComponent<FocusableViewProps, {}> {
-        static splitStyle(style: RN.StyleRuleSet | RN.StyleRuleSet[]) : SplitStyle;
     }
 
     interface ScrollViewProps extends RN.ScrollViewProps {
