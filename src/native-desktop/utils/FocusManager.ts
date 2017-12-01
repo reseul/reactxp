@@ -176,7 +176,7 @@ export function applyFocusableComponentMixin(Component: any, isConditionallyFocu
     inheritMethod('getTabIndex', function (origCallback: any, ...args: any[]) {
         // Check override available
         let state = this.state as FocusManagerFocusableComponentState;
-        if (state.overridenTabIndex !== undefined) {
+        if (state && state.overridenTabIndex !== undefined) {
             // Override available, use this one
             return state.overridenTabIndex;
         } else {

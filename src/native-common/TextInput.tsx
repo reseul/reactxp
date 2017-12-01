@@ -49,53 +49,59 @@ export class TextInput extends React.Component<Types.TextInputProps, TextInputSt
         }
     }
 
+    protected _render(props: RN.TextInputProps): JSX.Element {
+        return (
+            <RN.TextInput
+                {...props}
+            />)
+            ;
+    }
+
     render() {
         const editable = (this.props.editable !== undefined ? this.props.editable : true);
         const blurOnSubmit = this.props.blurOnSubmit || !this.props.multiline;
-        return (
-            <RN.TextInput
-                ref='nativeTextInput'
-                multiline={ this.props.multiline }
-                style={ Styles.combine([_styles.defaultTextInput, this.props.style]) }
-                value={ this.state.inputValue }
 
-                autoCorrect={ this.props.autoCorrect }
-                spellCheck={ this.props.spellCheck }
-                autoCapitalize={ this.props.autoCapitalize }
-                autoFocus= { this.props.autoFocus }
-                keyboardType={ this.props.keyboardType }
-                editable={ editable }
-                selectionColor={ this.props.selectionColor }
-                maxLength={ this.props.maxLength }
-                placeholder={ this.props.placeholder }
-                defaultValue={ this.props.value }
-                placeholderTextColor={ this.props.placeholderTextColor }
-                onSubmitEditing={this.props.onSubmitEditing }
-                onKeyPress={ this._onKeyPress }
-                onChangeText={ this._onChangeText }
-                onSelectionChange={ this._onSelectionChange }
-                onFocus={ this._onFocus }
-                onBlur={ this._onBlur }
-                onScroll={ this._onScroll }
-                selection={{ start: this._selectionStart, end: this._selectionEnd }}
-                secureTextEntry={ this.props.secureTextEntry }
+        let props: RN.TextInputProps = {
+            ref: 'nativeTextInput',
+            multiline: this.props.multiline,
+            style: Styles.combine([_styles.defaultTextInput, this.props.style]),
+            value: this.state.inputValue,
 
-                textAlign={ this.props.textAlign }
-                keyboardAppearance={ this.props.keyboardAppearance }
-                returnKeyType={ this.props.returnKeyType }
-                disableFullscreenUI={ this.props.disableFullscreenUI }
-                blurOnSubmit={ blurOnSubmit }
-                textBreakStrategy={ 'simple' }
-                accessibilityLabel={ this.props.accessibilityLabel }
-                allowFontScaling={ this.props.allowFontScaling }
-                maxContentSizeMultiplier={ this.props.maxContentSizeMultiplier }
-                underlineColorAndroid='transparent'
-            />
-        );
+            autoCorrect: this.props.autoCorrect,
+            spellCheck: this.props.spellCheck,
+            autoCapitalize: this.props.autoCapitalize,
+            autoFocus: this.props.autoFocus,
+            keyboardType: this.props.keyboardType,
+            editable: editable,
+            selectionColor: this.props.selectionColor,
+            maxLength: this.props.maxLength,
+            placeholder: this.props.placeholder,
+            defaultValue: this.props.value,
+            placeholderTextColor: this.props.placeholderTextColor,
+            onSubmitEditing: this.props.onSubmitEditing,
+            onKeyPress: this._onKeyPress,
+            onChangeText: this._onChangeText,
+            onSelectionChange: this._onSelectionChange,
+            onFocus: this._onFocus,
+            onBlur: this._onBlur,
+            onScroll: this._onScroll,
+            selection: { start: this._selectionStart, end: this._selectionEnd},
+            secureTextEntry: this.props.secureTextEntry,
+            textAlign: this.props.textAlign,
+            keyboardAppearance: this.props.keyboardAppearance,
+            returnKeyType: this.props.returnKeyType,
+            disableFullscreenUI: this.props.disableFullscreenUI,
+            blurOnSubmit: blurOnSubmit,
+            textBreakStrategy: 'simple',
+            accessibilityLabel: this.props.accessibilityLabel,
+            allowFontScaling: this.props.allowFontScaling,
+            maxContentSizeMultiplier: this.props.maxContentSizeMultiplier,
+            underlineColorAndroid: 'transparent'
+        };
+        return this._render(props);
     }
 
     private _onFocus = (e: Types.FocusEvent) => {
-        this.onFocus();
         this.setState({ isFocused: true });
 
         if (this.props.onFocus) {
@@ -197,10 +203,6 @@ export class TextInput extends React.Component<Types.TextInputProps, TextInputSt
 
     setAccessibilityFocus() {
         AccessibilityUtil.setAccessibilityFocus(this);
-    }
-
-    private onFocus() {
-        // Focus manager hook
     }
 
     isFocused() {

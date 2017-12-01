@@ -14,6 +14,8 @@ import {ScrollView as ScrollViewBase} from '../native-common/ScrollView';
 
 import EventHelpers from '../native-desktop/utils/EventHelpers';
 
+RNW.ScrollView = RN.ScrollView;
+
 export class ScrollView extends ScrollViewBase {
 
     render() {
@@ -92,7 +94,5 @@ export class ScrollView extends ScrollViewBase {
         }
     }
 }
-
-RNW.ScrollView = RN.ScrollView;
 
 export default ScrollView;

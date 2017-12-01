@@ -36,7 +36,7 @@ export class Link extends React.Component<Types.LinkProps, {}> {
         );
     }
 
-    private _onPress = (e: RX.Types.SyntheticEvent) => {
+    protected _onPress = (e: RX.Types.SyntheticEvent) => {
         if (this.props.onPress) {
             this.props.onPress(e, this.props.url);
             return;
@@ -50,7 +50,7 @@ export class Link extends React.Component<Types.LinkProps, {}> {
         }
     }
 
-    private _onLongPress = (e: RX.Types.SyntheticEvent) => {
+    protected _onLongPress = (e: RX.Types.SyntheticEvent) => {
         if (this.props.onLongPress) {
             this.props.onLongPress(e, this.props.url);
         }
