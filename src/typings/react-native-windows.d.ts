@@ -22,6 +22,7 @@ declare module 'react-native-windows' {
         isTabStop?                      : boolean;
         tabIndex?                       : number;
         tabNavigation?                  : string; // enum( 'local', 'cycle', 'once' );
+        useSystemFocusVisuals?          : boolean;
         onFocus?                        : Function;
         onBlur?                         : Function;
         handledKeyDownKeys?             : number[];

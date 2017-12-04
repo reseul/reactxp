@@ -49,6 +49,7 @@ export class Button extends ButtonBase implements FocusManagerFocusableComponent
             ref: this._onFocusableRef,
             isTabStop: windowsTabFocusable,
             tabIndex: tabIndex,
+            useSystemFocusVisuals: true,
             handledKeyDownKeys: DOWN_KEYCODES,
             handledKeyUpKeys: UP_KEYCODES,
             onKeyDown: this._onKeyDown,
