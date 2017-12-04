@@ -40,7 +40,7 @@ import { default as ScrollViewImpl, ScrollView as ScrollViewType } from './Scrol
 import { default as StatusBarImpl, StatusBar as StatusBarType } from './StatusBar';
 import { default as StorageImpl, Storage as StorageType } from '../native-common/Storage';
 import { default as StylesImpl, Styles as StylesType } from '../native-common/Styles';
-import { default as TextImpl, Text as TextType } from './Text';
+import { default as TextImpl, Text as TextType } from '../native-common/Text';
 import { default as TextInputImpl, TextInput as TextInputType } from './TextInput';
 import { default as UserInterfaceImpl, UserInterface as UserInterfaceType } from '../native-desktop/UserInterface';
 import { default as UserPresenceImpl, UserPresence as UserPresenceType } from '../native-common/UserPresence';

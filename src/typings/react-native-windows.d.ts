@@ -45,14 +45,6 @@ declare module 'react-native-windows' {
 
     class ScrollView extends RN.ReactNativeBaseComponent<ScrollViewProps, {}> { }
 
-    interface TextProps extends RN.TextProps {
-        tabIndex?                       : number;
-        onFocus?                        : Function;
-        onBlur?                         : Function;
-    }
-
-    class Text extends RN.ReactNativeBaseComponent<TextProps, {}> { }
-
     interface TextInputProps extends RN.TextInputProps {
         tabIndex?                       : number;
     }
