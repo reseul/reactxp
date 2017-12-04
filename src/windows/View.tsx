@@ -101,6 +101,11 @@ export class View extends ViewCommon implements React.ChildContextProvider<ViewC
             // "onKeyDown" is fired by native buttons and bubbles up.
             this._internalProps.onKeyDown = this._onKeyDown;
         }
+
+        if (props.tabIndex === undefined) {
+            // Force button to non focusable mode
+            this._internalProps.tabIndex = -1;
+        }
     }
 
     protected _isButton (viewProps: Types.ViewProps): boolean {

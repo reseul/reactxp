@@ -213,6 +213,7 @@ export function applyFocusableComponentMixin(Component: any, isConditionallyFocu
         this.setState((prevState: any, props: any) => {
             return {overridenTabIndex: args[0]};
         });
+        return this.props.tabIndex;
     }, true);
 
     // Implement 'removeTabIndexOverride'
@@ -222,6 +223,34 @@ export function applyFocusableComponentMixin(Component: any, isConditionallyFocu
             return {overridenTabIndex: undef};
         });
     }, true);
+
+    // Hook 'focus'
+    inheritMethod('focus', function (origCallback: Function) {
+        // Both ReactXP API and the UWP implementation (the only desktop platform for now) allow for two types of enabled controls:
+        // 1. the tab-stoppable ones, focusable (including programmaticaly), supporting keyboard input
+        // 2. non tab-stoppable, non focusable in any way, no keyboard input supported
+        //
+        // FocusManager logic relies on web DOM support of a third case (tabIndex<0 means nont tabstoppable but still keyboard focusable),
+        // so we can get "focus" calls on components with an overriden tabIndex of -1.
+        //
+        // In order to minimize rerenders we use a setState where we reset any overriden tabIndex and we delay the "focus" call to the
+        // associated callback.
+        //
+        if (origCallback) {
+            if (this.state.overridenTabIndex === -1) {
+                this.setState((prevState: any, props: any) => {
+                    let undef: number = undefined; // Ideally we'd like to remove the key, but there's no way.
+                    return {overridenTabIndex: undef};
+                }, () => {
+                    origCallback.apply(this);
+                });
+            } else {
+                origCallback.apply(this);
+            }
+        } else {
+            console.error('FocusableComponentMixin: focus error!');
+        }
+    });
 
     function inheritMethod(methodName: string, action: Function, optional?: boolean) {
         let origCallback = Component.prototype[methodName];
