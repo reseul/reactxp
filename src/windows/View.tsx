@@ -1,5 +1,5 @@
 /**
-* Animated.tsx
+* View.tsx
 *
 * Copyright (c) Microsoft Corporation. All rights reserved.
 * Licensed under the MIT license.
@@ -114,8 +114,8 @@ export class View extends ViewCommon implements React.ChildContextProvider<ViewC
         // - views with defined tabIndex become buttons
         // - views with undefined tabIndex remain views, and the handlers relies on
         // bubbled "onKeyDown"/etc. react events from children
-        return super._isButton(viewProps) ||
-            (viewProps.tabIndex !== undefined);
+        return (super._isButton(viewProps) ||
+            viewProps.tabIndex !== undefined);
     }
 
     protected _renderButton() : JSX.Element {
