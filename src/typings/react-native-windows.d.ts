@@ -42,6 +42,7 @@ declare module 'react-native-windows' {
     interface ScrollViewProps extends RN.ScrollViewProps {
         onKeyDown?                      : Function;
         onKeyUp?                        : Function;
+        disableKeyboardBasedScrolling?  : boolean;
     }
 
     class ScrollView extends RN.ReactNativeBaseComponent<ScrollViewProps, {}> { }

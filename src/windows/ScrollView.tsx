@@ -82,6 +82,7 @@ export class ScrollView extends ScrollViewBase {
                 onScrollBeginDrag={ this.props.onScrollBeginDrag }
                 onScrollEndDrag={ this.props.onScrollEndDrag }
                 onKeyDown={ onKeyDownCallback }
+                disableKeyboardBasedScrolling={true}
             >
                 { this.props.children }
             </RNW.ScrollView>
