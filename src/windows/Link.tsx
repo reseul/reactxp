@@ -32,17 +32,25 @@ export class Link extends LinkCommon implements FocusManagerFocusableComponent {
     };
     context: LinkContext;
 
-    private _focusableElement : RNW.FocusableViewWindows = null;
+    private _focusableElement : RNW.FocusableWindows = null;
 
-    private _onFocusableRef = (btn: RNW.FocusableViewWindows): void => {
+    private _onFocusableRef = (btn: RNW.FocusableWindows): void => {
         this._focusableElement = btn;
     }
 
     render() {
 
+        // The "in text parent" case requires a special nyi control.
+        let textStyle  = this.props.style;
+        let splitStyles: RNW.SplitStyleSet;
+        if (this.context && !this.context.isRxParentAText) {
+            splitStyles = RNW.FocusableWindows.splitStyle(this.props.style);
+            textStyle = splitStyles.childStyle;
+        }
+
         let content = (
             <RN.Text
-            style={ this.props.style }
+            style={ textStyle }
             ref='nativeLink'
             numberOfLines={ this.props.numberOfLines === 0 ? null : this.props.numberOfLines }
             onPress={ this._onPress }
@@ -60,26 +68,27 @@ export class Link extends LinkCommon implements FocusManagerFocusableComponent {
             let tabIndex: number = this.getTabIndex() || 0;
             let windowsTabFocusable: boolean =  tabIndex >= 0;
 
-            // RNW.FocusableViewWindows doesn't participate in layouting, it basically mimics the position/width of the child
+            // RNW.FocusableWindows doesn't participate in layouting, it basically mimics the position/width of the child
 
-            let focusableViewProps: RNW.FocusableViewProps = {
+            let focusableViewProps: RNW.FocusableProps = {
                 ref: this._onFocusableRef,
                 isTabStop: windowsTabFocusable,
                 tabIndex: tabIndex,
-                useSystemFocusVisuals: true,
+                disableSystemFocusVisuals: false,
                 handledKeyDownKeys: DOWN_KEYCODES,
                 handledKeyUpKeys: UP_KEYCODES,
                 onKeyDown: this._onKeyDown,
                 onKeyUp: this._onKeyUp,
                 onFocus: this._onFocus,
+                style: splitStyles.focusableStyle
             };
 
             content = (
-                <RNW.FocusableViewWindows
+                <RNW.FocusableWindows
                     {...focusableViewProps}
                 >
                     {content}
-                </RNW.FocusableViewWindows>
+                </RNW.FocusableWindows>
             );
         }
 
@@ -125,6 +134,21 @@ export class Link extends LinkCommon implements FocusManagerFocusableComponent {
 
     private _onFocus = (e: React.SyntheticEvent): void => {
         this.onFocus();
+    }
+
+    setNativeProps(nativeProps: RN.ViewProps) {
+        if (this._focusableElement) {
+            let nativePropsSet = RNW.FocusableWindows.splitNativeProps(nativeProps);
+            if (nativePropsSet.focusableProps !== undefined) {
+                this._focusableElement.setNativeProps(nativePropsSet.focusableProps);
+            }
+
+            if (nativePropsSet.childProps !== undefined) {
+                super.setNativeProps(nativePropsSet.childProps);
+            }
+        } else {
+            super.setNativeProps(nativeProps);
+        }
     }
 
     onFocus() {

@@ -18,11 +18,11 @@ declare module 'react-native-windows' {
     //
     // Focusable view related declarations
     // ----------------------------------------------------------------------
-    interface FocusableViewProps extends RN.ViewProps {
+    interface FocusableProps extends RN.ViewProps {
         isTabStop?                      : boolean;
         tabIndex?                       : number;
         tabNavigation?                  : string; // enum( 'local', 'cycle', 'once' );
-        useSystemFocusVisuals?          : boolean;
+        disableSystemFocusVisuals?      : boolean;
         onFocus?                        : Function;
         onBlur?                         : Function;
         handledKeyDownKeys?             : number[];
@@ -31,12 +31,18 @@ declare module 'react-native-windows' {
         onKeyUp?                        : Function;
     }
 
-    interface SplitStyle {
+    interface SplitStyleSet {
         focusableStyle: RN.StyleRuleSet;
         childStyle: RN.StyleRuleSet;
     }
 
-    class FocusableViewWindows extends RN.ReactNativeBaseComponent<FocusableViewProps, {}> {
+    interface SplitPropsSet {
+        focusableProps: RN.ViewProps | undefined;
+        childProps: RN.ViewProps;
+    }
+    class FocusableWindows extends RN.ReactNativeBaseComponent<FocusableProps, {}> {
+        static splitStyle(style: RN.StyleRuleSet | RN.StyleRuleSet[]): SplitStyleSet;
+        static splitNativeProps(props: RN.ViewProps): SplitPropsSet;
     }
 
     interface ScrollViewProps extends RN.ScrollViewProps {

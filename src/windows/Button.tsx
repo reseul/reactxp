@@ -32,42 +32,46 @@ UserInterface.keyboardNavigationEvent.subscribe(isNavigatingWithKeyboard => {
 
 export class Button extends ButtonBase implements FocusManagerFocusableComponent {
 
-    private _focusableElement : RNW.FocusableViewWindows = null;
+    private _focusableElement : RNW.FocusableWindows = null;
 
-    private _onFocusableRef = (btn: RNW.FocusableViewWindows): void => {
+    private _onFocusableRef = (btn: RNW.FocusableWindows): void => {
         this._focusableElement = btn;
     }
 
     protected _render(internalProps: any): JSX.Element {
 
+        let styleSet = RNW.FocusableWindows.splitStyle(internalProps.style);
+
         let tabIndex: number = this.getTabIndex() || 0;
         let windowsTabFocusable: boolean = !this.props.disabled && tabIndex >= 0;
 
-        // RNW.FocusableViewWindows doesn't participate in layouting, it basically mimics the position/width of the child
+        // RNW.FocusableWindows doesn't participate in layouting, it basically mimics the position/width of the child
 
-        let focusableViewProps: RNW.FocusableViewProps = {
+        let focusableViewProps: RNW.FocusableProps = {
             ref: this._onFocusableRef,
             isTabStop: windowsTabFocusable,
             tabIndex: tabIndex,
-            useSystemFocusVisuals: true,
+            disableSystemFocusVisuals: false,
             handledKeyDownKeys: DOWN_KEYCODES,
             handledKeyUpKeys: UP_KEYCODES,
             onKeyDown: this._onKeyDown,
             onKeyUp: this._onKeyUp,
             onFocus: this._onFocus,
-            onBlur: this._onBlur
+            onBlur: this._onBlur,
+            style: styleSet.focusableStyle
         };
 
         return (
-            <RNW.FocusableViewWindows
+            <RNW.FocusableWindows
                 {...focusableViewProps}
             >
                 <RN.Animated.View
                     {...internalProps}
+                    style = {styleSet.childStyle}
                 >
                     { this.props.children }
                 </RN.Animated.View>
-            </RNW.FocusableViewWindows>
+            </RNW.FocusableWindows>
         );
     }
 
@@ -84,7 +88,20 @@ export class Button extends ButtonBase implements FocusManagerFocusableComponent
         if (this._focusableElement && this._focusableElement.blur) {
             this._focusableElement.blur();
         }
-   }
+    }
+
+    setNativeProps(nativeProps: RN.ViewProps) {
+        let nativePropsSet = RNW.FocusableWindows.splitNativeProps(nativeProps);
+        if (nativePropsSet.focusableProps !== undefined) {
+            if (this._focusableElement) {
+                this._focusableElement.setNativeProps(nativePropsSet.focusableProps);
+            }
+        }
+
+        if (nativePropsSet.childProps !== undefined) {
+            super.setNativeProps(nativePropsSet.childProps);
+        }
+    }
 
     private _onKeyDown = (e: React.SyntheticEvent): void => {
 
