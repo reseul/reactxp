@@ -30,6 +30,8 @@ UserInterface.keyboardNavigationEvent.subscribe(isNavigatingWithKeyboard => {
     _isNavigatingWithKeyboard = isNavigatingWithKeyboard;
 });
 
+const IsUpdatedReactNativeForWindows = (RNW.FocusableWindows !== undefined);
+
 export class Button extends ButtonBase implements FocusManagerFocusableComponent {
 
     private _focusableElement : RNW.FocusableWindows = null;
@@ -39,6 +41,10 @@ export class Button extends ButtonBase implements FocusManagerFocusableComponent
     }
 
     protected _render(internalProps: any): JSX.Element {
+
+        if (!IsUpdatedReactNativeForWindows) {
+            return super._render(internalProps);
+        }
 
         let styleSet = RNW.FocusableWindows.splitStyle(internalProps.style);
 
@@ -91,15 +97,17 @@ export class Button extends ButtonBase implements FocusManagerFocusableComponent
     }
 
     setNativeProps(nativeProps: RN.ViewProps) {
-        let nativePropsSet = RNW.FocusableWindows.splitNativeProps(nativeProps);
-        if (nativePropsSet.focusableProps !== undefined) {
-            if (this._focusableElement) {
-                this._focusableElement.setNativeProps(nativePropsSet.focusableProps);
+        if (this._focusableElement) {
+            let nativePropsSet = RNW.FocusableWindows.splitNativeProps(nativeProps);
+            if (nativePropsSet.focusableProps !== undefined) {
+               this._focusableElement.setNativeProps(nativePropsSet.focusableProps);
             }
-        }
 
-        if (nativePropsSet.childProps !== undefined) {
-            super.setNativeProps(nativePropsSet.childProps);
+            if (nativePropsSet.childProps !== undefined) {
+                super.setNativeProps(nativePropsSet.childProps);
+            }
+        } else {
+            super.setNativeProps(nativeProps);
         }
     }
 

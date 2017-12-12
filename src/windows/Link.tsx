@@ -26,6 +26,8 @@ export interface LinkContext {
     isRxParentAText?: boolean;
 }
 
+const IsUpdatedReactNativeForWindows = (RNW.FocusableWindows !== undefined);
+
 export class Link extends LinkCommon implements FocusManagerFocusableComponent {
     static contextTypes: React.ValidationMap<any> = {
         isRxParentAText: PropTypes.bool,
@@ -39,6 +41,10 @@ export class Link extends LinkCommon implements FocusManagerFocusableComponent {
     }
 
     render() {
+
+        if (!IsUpdatedReactNativeForWindows) {
+            return super.render();
+        }
 
         // The "in text parent" case requires a special nyi control.
         let textStyle  = this.props.style;
