@@ -82,6 +82,7 @@ export class ScrollView extends ScrollViewBase {
                 onScrollBeginDrag={ this.props.onScrollBeginDrag }
                 onScrollEndDrag={ this.props.onScrollEndDrag }
                 onKeyDown={ onKeyDownCallback }
+                tabNavigation={ this.props.tabNavigation }
                 disableKeyboardBasedScrolling={true}
             >
                 { this.props.children }

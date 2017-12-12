@@ -776,6 +776,9 @@ export interface ScrollViewProps extends ViewProps {
 
     // iOS-only property to control scroll indicator insets
     scrollIndicatorInsets?:  {top: number, left: number, bottom: number, right: number };
+
+    // Windows-only property to control tab navigation inside the view
+    tabNavigation?: 'local' | 'cycle' | 'once';
 }
 
 // Link

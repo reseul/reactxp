@@ -45,7 +45,7 @@ export interface FocusManagerFocusableComponent {
 export class FocusManager extends FocusManagerBase {
 
     protected /* static */ addFocusListenerOnComponent(component: React.Component<any, any>, onFocus: EventListener): void {
-        // We intercept the private "_onFocus" all the focusable elements have to have
+        // We intercept the "onFocus" all the focusable elements have to have
         (component as any)._onFocusSink = onFocus;
     }
 
