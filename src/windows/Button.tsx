@@ -163,9 +163,6 @@ export class Button extends ButtonBase implements FocusManagerFocusableComponent
     }
 }
 
-applyFocusableComponentMixin(Button, function (nextProps?: Types.ButtonProps) {
-    let tabIndex: number = nextProps && ('tabIndex' in nextProps) ? nextProps.tabIndex : this.props.tabIndex;
-    return tabIndex !== -1; // "undefined" will map to focusable by default
-});
+applyFocusableComponentMixin(Button);
 
 export default Button;
