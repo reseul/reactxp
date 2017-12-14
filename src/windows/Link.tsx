@@ -74,7 +74,7 @@ export class Link extends LinkCommon implements FocusManagerFocusableComponent {
             let tabIndex: number = this.getTabIndex() || 0;
             let windowsTabFocusable: boolean =  tabIndex >= 0;
 
-            // RNW.FocusableWindows doesn't participate in layouting, it basically mimics the position/width of the child
+            // RNW.FocusableWindows doesn't participate in layouting, it basically mimics the position/size of the child
 
             let focusableViewProps: RNW.FocusableProps = {
                 ref: this._onFocusableRef,
