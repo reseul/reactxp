@@ -74,6 +74,11 @@ export class Button extends ButtonBase implements FocusManagerFocusableComponent
                 <RN.Animated.View
                     {...internalProps}
                     style = {styleSet.childStyle}
+                    // We replace ReactNative's onAccessibilityTap with our internal handler since we are
+                    // in Windows here so if there is any function assigned by user it will not be called anyway
+                    // since the prop is iOS only as documented. This is all to avoid creating a UWP specific
+                    // accessibility invocation event on RNView
+                    onAccessibilityTap = {this._onAccessibilityTap}
                 >
                     { this.props.children }
                 </RN.Animated.View>
@@ -153,6 +158,12 @@ export class Button extends ButtonBase implements FocusManagerFocusableComponent
         }
     }
 
+    private _onAccessibilityTap = (e: React.SyntheticEvent): void => {
+        if (!this.props.disabled && this.props.onPress) {
+            this.props.onPress(e);
+        }
+    }
+    
     onFocus() {
         // Focus Manager hook
     }
